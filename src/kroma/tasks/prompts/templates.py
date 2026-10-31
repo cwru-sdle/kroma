@@ -1,3 +1,11 @@
+"""Prompt templates sent to the language model.
+
+The task templates take ``{src_names}``, ``{src_parents}``,
+``{src_children}``, ``{src_synonyms}`` and the matching ``{tgt_*}`` fields;
+the round templates take ``{agent_answers}``. Answers are requested in
+``<answer>`` and ``<confidence>`` tags.
+"""
+
 SYSTEM_PROMPT = """
 You are OntoMapper, an agent that determines whether two ontology concepts are closedly related based on their names and hierarchical relationships. Given the following inputs for each concept: names, parent concepts, and child concepts, analyze the provided information and output "Yes" if the concepts are closedly related, or "No" if they are different. Your decision should be based solely on the comparison of the concept names (which may include multiple labels) and their hierarchical context.
 """

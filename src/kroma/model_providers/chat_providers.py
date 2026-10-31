@@ -1,9 +1,13 @@
+"""Chat providers for OpenAI and Together AI."""
+
 from typing import Any, Dict, List, Tuple
 from .providers import ChatProvider, parse_chat_response
 
 class OpenAIProvider(ChatProvider):
-    """
-    ChatProvider implementation for OpenAI's API via the openai-python client.
+    """Chat provider for the OpenAI API, through the ``openai`` package.
+
+    Args:
+        api_key (str): OpenAI API key.
     """
     def __init__(self, api_key: str):
         from openai import OpenAI
@@ -49,8 +53,10 @@ class OpenAIProvider(ChatProvider):
 
 
 class TogetherProvider(ChatProvider):
-    """
-    ChatProvider implementation for TogetherAI.
+    """Chat provider for Together AI, through the ``together`` package.
+
+    Args:
+        api_key (str): Together API key.
     """
     def __init__(self, api_key: str):
         from together import Together

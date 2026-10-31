@@ -1,3 +1,5 @@
+"""Defaults for models, sampling, retrieval, refinement and endpoints."""
+
 # default models
 DEFAULT_CHAT_BACKEND = "togetherai"
 DEFAULT_CHAT_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"

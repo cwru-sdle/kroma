@@ -1,3 +1,5 @@
+"""Precision, recall and F1 for binary alignment labels."""
+
 from typing import Sequence, Tuple
 
 def calculate_metrics(
@@ -7,14 +9,19 @@ def calculate_metrics(
 ) -> Tuple[float, float, float]:
     """
     Compute precision, recall, and F1 for binary labels in one pass.
-    
+
     Args:
-        y_true: ground‑truth labels
-        y_pred: predicted labels
-        positive_label: the value considered “positive”
-    
+        y_true (Sequence[int]): Ground-truth labels.
+        y_pred (Sequence[int]): Predicted labels.
+        positive_label (int): The value counted as positive.
+
     Returns:
-        (precision, recall, f1)
+        tuple[float, float, float]: ``(precision, recall, f1)``; a metric
+        whose denominator is zero is 0.0.
+
+    Example:
+        >>> calculate_metrics([1, 0, 1, 1], [1, 1, 0, 1])
+        (0.6666666666666666, 0.6666666666666666, 0.6666666666666666)
     """
     tp = fp = fn = 0
     for yt, yp in zip(y_true, y_pred):

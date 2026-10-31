@@ -1,3 +1,5 @@
+"""Provider-independent wrappers for chat and embedding models."""
+
 from typing import Any, Dict, List, Optional, Tuple
 from kroma.config.arguments import (
     ModelArguments, 
@@ -18,10 +20,17 @@ from kroma.config.constants import (
 from kroma.decorators import retry
 
 class BaseModel:
-    """
-    Wraps a ChatProvider (OpenAI, Together, etc.) to provide:
-      - generate(...)
-      - built‑in token accounting and (optional) truncation
+    """Chat model that adds retries, truncation and cost accounting to a provider.
+
+    Create one with :func:`kroma.inference.factory.create_inference_model`.
+
+    Args:
+        provider (ChatProvider): Backend that sends requests.
+        args (ModelArguments): Model name and default sampling settings.
+        metadata (ModelMetadata): Per-token prices.
+
+    Attributes:
+        stats (APIStats): Running cost and token totals.
     """
 
     def __init__(
@@ -45,9 +54,25 @@ class BaseModel:
         response_format: Any = None,
         truncate: bool = True,
     ) -> Any:
-        """
-        Build messages, optionally truncate, call the provider,
-        update costs, and return either (msg, in_t, out_t) or msg only.
+        """Send one system and user message and return the reply.
+
+        Transient provider errors are retried (see
+        :func:`kroma.decorators.retry`).
+
+        Args:
+            system_prompt (str): System message.
+            prompt (str): User message.
+            include_tokens (bool): Return token counts and update
+                :attr:`stats`.
+            temperature (float | None): Overrides the default temperature.
+            max_tokens (int | None): Overrides the default completion limit.
+            response_format: Structured-output schema, passed to the provider.
+            truncate (bool): Drop older messages that do not fit the token
+                budget.
+
+        Returns:
+            str | tuple: The reply, or ``(reply, input_tokens, output_tokens)``
+            when ``include_tokens`` is true.
         """
         # 1. construct message list
         messages: List[Dict[str,str]] = [
@@ -122,9 +147,13 @@ class BaseModel:
         return keep
 
 class BaseEmbeddingModel:
-    """
-    Wraps any EmbeddingProvider (HF, Ollama, etc.) to expose a
-    simple .encode(...) method.
+    """Embedding model with a simple :meth:`encode` method.
+
+    Create one with :func:`kroma.inference.factory.create_embedding_model`.
+
+    Args:
+        provider (EmbeddingProvider): Backend that computes vectors.
+        args (EmbeddingArguments): Model settings.
     """
 
     def __init__(
@@ -136,7 +165,12 @@ class BaseEmbeddingModel:
         self.args = args
 
     def encode(self, texts: List[str]) -> List[List[float]]:
-        """
-        Returns a list of embedding vectors, one per input string.
+        """Embed each string.
+
+        Args:
+            texts (list[str]): Strings to embed.
+
+        Returns:
+            list[list[float]]: One vector per string.
         """
         return self.provider.embed(texts)

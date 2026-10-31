@@ -1,3 +1,11 @@
+"""Loaders that turn benchmark files into graphs and candidate alignments.
+
+A loader returns ``(source_graph, target_graph, alignments)``. Graph keys are
+``(code, uri)`` tuples mapped to their children; each alignment is
+``((src_code, src_uri), (tgt_code, tgt_uri), label)`` with ``label`` the
+string ``"1"`` for a match and ``"0"`` otherwise.
+"""
+
 import csv
 import ast
 from abc import ABC, abstractmethod
@@ -15,11 +23,31 @@ class OntologyLoader(ABC):
         Dict[Tuple[str, str], Any],  # target graph
         List[Tuple[Tuple[str, str], Tuple[str, str], str]]  # alignments
     ]:
+        """Load the data.
+
+        Returns:
+            tuple: ``(source_graph, target_graph, alignments)`` as described
+            in :mod:`kroma.tasks.loader`.
+        """
         pass
 
 
 class CsvAlignmentLoader(OntologyLoader):
-    """Loads pairwise alignments from CSV benchmark files."""
+    """Loads pairwise alignments from CSV benchmark files.
+
+    Two layouts are supported:
+
+    * ``ncit-doid``: columns ``src_code``, ``src_ety``, ``tgt_code``,
+      ``tgt_ety``, ``score`` and an optional ``tgt_cands`` list. Each
+      candidate becomes one alignment, labelled ``"1"`` only for the true
+      target when ``score`` is ``1``.
+    * any other value: columns ``source``, ``source_uri``, ``target``,
+      ``target_uri`` and ``relation`` (or ``Relation``, default ``"1"``).
+
+    Args:
+        csv_paths (list[str | pathlib.Path]): CSV files to read, in order.
+        dataset (str): Layout name, ``"ncit-doid"`` or another dataset type.
+    """
     def __init__(self, csv_paths: List[str], dataset: str = "ncit-doid"):
         self.csv_paths = csv_paths
         self.dataset = dataset
@@ -29,6 +57,13 @@ class CsvAlignmentLoader(OntologyLoader):
         Dict[Tuple[str, str], Any],
         List[Tuple[Tuple[str, str], Tuple[str, str], str]]
     ]:
+        """Read every CSV file.
+
+        Returns:
+            tuple: ``(source_graph, target_graph, alignments)``. The graphs
+            contain every concept that appears in a row, with empty child
+            lists.
+        """
         G1 = defaultdict(list)
         G2 = defaultdict(list)
         alignments = []
@@ -59,7 +94,11 @@ class CsvAlignmentLoader(OntologyLoader):
 
 
 class OwlOntologyLoader(OntologyLoader):
-    """Loads class hierarchy and synonyms from an OWL/RDF file."""
+    """Loads class hierarchy and synonyms from an OWL/RDF file.
+
+    Args:
+        owl_path (str): Path or URL of an RDF/XML ontology.
+    """
     def __init__(self, owl_path: str):
         self.owl_path = owl_path
 
@@ -68,6 +107,14 @@ class OwlOntologyLoader(OntologyLoader):
         Dict[Tuple[str, str], Any],
         List[Tuple[Tuple[str, str], Tuple[str, str], str]]
     ]:
+        """Parse the ontology.
+
+        Returns:
+            tuple: ``(hierarchy, synonyms, [])``. ``hierarchy`` maps each
+            ``(name, uri)`` class to its ``rdfs:subClassOf`` children;
+            ``synonyms`` maps a class name to the names of its
+            ``owl:equivalentClass`` classes. No alignments are returned.
+        """
         g = Graph()
         g.parse(self.owl_path, format='xml')
 

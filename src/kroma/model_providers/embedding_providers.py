@@ -1,3 +1,5 @@
+"""Embedding providers backed by Hugging Face models."""
+
 import torch
 from typing import List
 from transformers import AutoTokenizer, BertTokenizerFast, AutoModel
@@ -5,12 +7,21 @@ from sentence_transformers import SentenceTransformer, models
 from .providers import EmbeddingProvider
 
 class HFEmbeddingProvider(EmbeddingProvider):
+    """Embed text with a Hugging Face encoder, using the ``[CLS]`` token vector.
+
+    Runs on CUDA when available.
+
+    Args:
+        model_name (str): Hugging Face model id, such as
+            ``"allenai/scibert_scivocab_uncased"``.
+    """
     def __init__(self, model_name: str):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
 
     def embed(self, texts: List[str]) -> List[List[float]]:
+        """Return the ``[CLS]`` vector of each string."""
         enc = self.tokenizer(
             texts,
             padding=True,
@@ -25,7 +36,14 @@ class HFEmbeddingProvider(EmbeddingProvider):
 
     
 class STEmbeddingProvider(EmbeddingProvider):
-    """sentence-transformers"""
+    """Embed text with sentence-transformers, mean-pooling token vectors.
+
+    Inputs are cut to 512 tokens and lower-cased when the model name contains
+    ``"uncased"``. Runs on CUDA when available.
+
+    Args:
+        model_name (str): Hugging Face model id.
+    """
     def __init__(self, model_name: str):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         word_embedding_model = models.Transformer(
@@ -47,6 +65,7 @@ class STEmbeddingProvider(EmbeddingProvider):
         )
 
     def embed(self, texts: List[str]) -> List[List[float]]:
+        """Return the mean-pooled vector of each string."""
         embeddings = self.model.encode(
             texts,
             convert_to_numpy=True,

@@ -1,12 +1,25 @@
+"""Graph helpers for ranking and merging ontology hierarchies."""
+
 from collections import defaultdict, deque
 from typing import Dict, Iterable, Any, Tuple, List, Set
 
 def compute_node_ranks(
     graph: Dict[Any, Set[Any]]
 ) -> Dict[Any, int]:
-    """
-    Given a DAG (parent -> children), compute for each node its 'rank'
-    (longest distance from any root). Roots (no incoming edges) have rank 0.
+    """Compute each node's rank: its longest distance from a root.
+
+    Roots (no incoming edges) have rank 0. Nodes on a cycle are never
+    reached and are left out.
+
+    Args:
+        graph (dict): DAG as parent to children.
+
+    Returns:
+        dict: Node to rank.
+
+    Example:
+        >>> sorted(compute_node_ranks({"a": {"b", "c"}, "b": {"c"}}).items())
+        [('a', 0), ('b', 1), ('c', 2)]
     """
     indegree = defaultdict(int)
     for parent, children in graph.items():
@@ -29,6 +42,12 @@ def compute_node_ranks(
 
 
 def merge_graphs(*graphs: Dict[Any, Set[Any]]) -> Dict[Any, Set[Any]]:
+    """Union several parent-to-children graphs into one.
+
+    Example:
+        >>> merge_graphs({"a": {"b"}}, {"a": {"c"}}) == {"a": {"b", "c"}}
+        True
+    """
     merged: Dict[Any, Set[Any]] = {}
     for G in graphs:
         for u, vs in G.items():
