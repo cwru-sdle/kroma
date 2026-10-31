@@ -28,12 +28,22 @@
 
 ## ⚡ Quick start
 
+Align two ontologies (any RDF format: `.owl`, `.ttl`, ...):
+
 ```bash
-pip install "kroma-om[models]"   # the package imports as `kroma`
-kroma --help
+pip install kroma-om openai          # the package imports as `kroma`
+export OPENAI_API_KEY=sk-...
+kroma match mouse.owl human.owl -o alignments.csv
 ```
 
-The API reference is at [kroma.readthedocs.io](https://kroma.readthedocs.io/).
+```python
+import kroma
+
+result = kroma.match("mouse.owl", "human.owl", model="gpt-4o-mini")
+result.save("alignments.csv")        # or .tsv, or .rdf (OAEI format)
+```
+
+The docs are at [kroma.readthedocs.io](https://kroma.readthedocs.io/).
 To reproduce the paper's experiments, work from a clone, since runs read
 `experiments/configs/`:
 
@@ -217,6 +227,9 @@ Together models read `TOGETHERAI_API_KEY`, and OpenAI models read
 | `--active_learning` | Accept an answer only when a confidence-based acceptance score is positive |
 | `--baseline` | Write results under `results/baseline/` instead of `results/results/` |
 
+`kroma run` reproduces the paper's benchmarks. To align your own ontologies,
+use `kroma match` (see Quick start).
+
 The same flags work with `python -m main`. A run skips pairs it has already
 scored, so an interrupted run resumes where it stopped. From Python,
 `kroma.pipeline.MatchingRun(args).execute()` takes the same arguments and
@@ -248,7 +261,10 @@ returns the metrics dictionary.
 
 ```text
 src/kroma/         Installable package
-  cli.py           kroma run
+  matcher.py       kroma.match: two ontologies in, alignments out
+  ontology.py      Load OWL/RDF ontologies
+  alignment.py     Alignment results; CSV, TSV and OAEI RDF output
+  cli.py           kroma match, kroma run
   pipeline.py      MatchingRun: prepare, score pairs, write metrics
   tasks/           Loaders, prompt builders, context sources
   agents/          Single-model and debate inference

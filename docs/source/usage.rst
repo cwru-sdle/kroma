@@ -1,5 +1,8 @@
-Usage
-=====
+Benchmark experiments
+=====================
+
+This page covers reproducing the paper's experiments. To align your own
+ontologies, see :doc:`matching`.
 
 Running an experiment
 ---------------------
