@@ -42,7 +42,7 @@ result.save("alignments.csv")    # .csv, .tsv, or .rdf (OAEI format)
 
 KROMA reads any RDF format (`.owl`, `.ttl`, `.rdf`, …) and works with OpenAI,
 Together AI, or any function that takes a prompt and returns text. See the
-[documentation](https://kroma.readthedocs.io/en/latest/matching.html) for all
+[documentation](https://kroma.readthedocs.io/en/latest/) for all
 options.
 
 ## Results
