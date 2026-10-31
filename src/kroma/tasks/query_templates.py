@@ -1,5 +1,14 @@
+"""SPARQL templates for the NCIt, DOID and DBpedia endpoints.
+
+Each class holds four templates (parents, children, synonyms, label) with a
+``<code>`` placeholder that :class:`kroma.tasks.query_engine.SparqlStrategy`
+replaces with a concept code.
+"""
+
 ### NCIT Query Templates
 class ncit_query_templates:
+    """Templates for the NCI Thesaurus endpoint; ``<code>`` is an NCIt code."""
+
     query_children_template = """
     prefix ncit:  <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#>
     prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
@@ -86,6 +95,8 @@ class ncit_query_templates:
 
 ### DOID Query Templates
 class doid_query_templates:
+    """Templates for the Disease Ontology endpoint; ``<code>`` is a DOID number."""
+
     query_synonyms_template = """
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -165,6 +176,8 @@ class doid_query_templates:
 
 ### DBpedia Query Templates
 class dbpedia_query_templates:
+    """Templates for DBpedia; ``<code>`` is a ``dbo:`` class name."""
+
     query_parents_template = """
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>

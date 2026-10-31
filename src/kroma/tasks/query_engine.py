@@ -1,4 +1,11 @@
-"""Query strategies for dictionary, SPARQL, ontology, and ConceptNet context."""
+"""Query strategies for dictionary, SPARQL, ontology, and ConceptNet context.
+
+Each strategy has a ``fetch(code, pcmap, dictionary, topk)`` method returning
+``(parents, children, synonyms, labels)``. Strategies are registered by name
+in :data:`QUERY_STRATEGIES`, and :func:`query` merges the results of the
+names listed in a method config's ``query_options``. Register your own with
+:func:`register_query_strategy`.
+"""
 
 import requests
 from typing import List, Tuple, Dict, Any
@@ -50,9 +57,25 @@ def _truncate(parents, children, synonyms, labels, topk):
 
 
 class DictionaryStrategy:
-    """Read parents, children, synonyms, and labels from a cached dictionary."""
+    """Read parents, children, synonyms, and labels from a cached dictionary.
+
+    Used for the names in :data:`DICT_OPTS`, whose context was cached offline
+    (see :func:`kroma.utils.file.load_cache`).
+    """
 
     def fetch(self, code, pcmap, dictionary, topk=DICT_QUERY_TOP_K):
+        """Look up one concept in a cached dictionary.
+
+        Args:
+            code (str): Concept code.
+            pcmap (dict): Unused; kept for a common signature.
+            dictionary (dict): Cache for one source, keyed by concept code.
+            topk (int): Maximum items per list.
+
+        Returns:
+            tuple[list[str], list[str], list[str], list[str]]: Parents,
+            children, synonyms and labels, deduplicated and truncated.
+        """
         record = dictionary.get(code, {})
         parents = [urlparse(uri).path.lstrip("/") for uri in _clean_uri_list(record.get("parents", []))]
         children = [urlparse(uri).path.lstrip("/") for uri in _clean_uri_list(record.get("children", []))]
@@ -60,13 +83,35 @@ class DictionaryStrategy:
 
 
 class SparqlStrategy:
-    """Read context from a SPARQL endpoint template."""
+    """Read context from a SPARQL endpoint template.
+
+    Requires the ``SPARQLWrapper`` package (in the ``models`` extra).
+
+    Args:
+        endpoint (str): Key in :data:`kroma.config.constants.SPARQLEndpoints`.
+        templates: Class with ``query_parents_template``,
+            ``query_children_template``, ``query_synonyms_template`` and
+            ``query_label_template`` strings, each containing a ``<code>``
+            placeholder (see :mod:`kroma.tasks.query_templates`).
+    """
 
     def __init__(self, endpoint: str, templates):
         self.endpoint = endpoint
         self.templates = templates
 
     def fetch(self, code, pcmap, dictionary, topk=DICT_QUERY_TOP_K):
+        """Run the four templates for one concept.
+
+        Args:
+            code (str): Concept code substituted for ``<code>``.
+            pcmap (dict): Unused; kept for a common signature.
+            dictionary (dict): Unused; kept for a common signature.
+            topk (int): Maximum items per list.
+
+        Returns:
+            tuple[list[str], list[str], list[str], list[str]]: Lower-cased
+            parents, children, synonyms and labels.
+        """
         from SPARQLWrapper import SPARQLWrapper2
 
         sparql = SPARQLWrapper2(SPARQLEndpoints[self.endpoint])
@@ -88,6 +133,19 @@ class OntologyStrategy:
     """Read parents and children from the in-memory ontology maps."""
 
     def fetch(self, code, pcmap, dictionary, topk=DICT_QUERY_TOP_K):
+        """Return the concept's parents and children from ``pcmap``.
+
+        Args:
+            code (str): Concept code.
+            pcmap (dict[str, dict[str, set]]): ``{"parent": ..., "child": ...}``
+                maps from :func:`kroma.tasks.builder.build_parent_child_map`.
+            dictionary (dict): Unused; kept for a common signature.
+            topk (int): Unused; the lists are not truncated.
+
+        Returns:
+            tuple[list[str], list[str], list, list]: Parents, children and two
+            empty lists.
+        """
         parents = list(pcmap["parent"].get(code, []))
         children = list(pcmap["child"].get(code, []))
         return parents, children, [], []
@@ -104,6 +162,12 @@ class ConceptNetStrategy:
         self._words = None
 
     def bind(self, embedder) -> None:
+        """Use ``embedder`` instead of loading the default embedding model.
+
+        Args:
+            embedder: Object with an ``encode(list[str])`` method, such as
+                :class:`~kroma.model_providers.base_model.BaseEmbeddingModel`.
+        """
         self._embedder = embedder
 
     def _english_words(self):
@@ -121,6 +185,23 @@ class ConceptNetStrategy:
         return self._embedder
 
     def fetch(self, concept, pcmap, dictionary, topk=CONCEPTNET_TOP_K):
+        """Query ConceptNet for an English word.
+
+        Each edge is bucketed as synonym, parent or child by its relation,
+        and the edge end closer to ``concept`` in embedding space is kept.
+        Terms are ranked by edge weight.
+
+        Args:
+            concept (str): Word to look up; non-dictionary words return empty
+                lists without a request.
+            pcmap (dict): Unused; kept for a common signature.
+            dictionary (dict): Unused; kept for a common signature.
+            topk (int): Maximum items per list.
+
+        Returns:
+            tuple[list[str], list[str], list[str], list[str]]: Parents,
+            children, synonyms and ``[concept]``.
+        """
         if concept not in self._english_words():
             return [], [], [], []
 
@@ -175,7 +256,13 @@ QUERY_STRATEGIES["conceptnet"] = _CONCEPTNET
 
 
 def register_query_strategy(name: str, strategy) -> None:
-    """Register a named context source used by query()."""
+    """Register a named context source used by :func:`query`.
+
+    Args:
+        name (str): Name to list in a method config's ``query_options``.
+        strategy: Object with a ``fetch(code, pcmap, dictionary)`` method
+            returning ``(parents, children, synonyms, labels)``.
+    """
     QUERY_STRATEGIES[name] = strategy
 
 
@@ -185,7 +272,23 @@ def query(
     dictionary: Dict[str, Any],
     options: List[str],
 ) -> Tuple[List[str], List[str], List[str], List[str]]:
-    """Merge parents, children, synonyms, and labels from each requested source."""
+    """Merge parents, children, synonyms, and labels from each requested source.
+
+    Unknown option names are skipped, and a source that raises is skipped too,
+    so one unreachable endpoint does not stop a run.
+
+    Args:
+        concept_code (str): Concept code to look up.
+        pcmap (dict[str, set]): ``{"parent": ..., "child": ...}`` maps for the
+            concept's ontology.
+        dictionary (dict[str, Any]): Cached dictionaries keyed by source name;
+            dictionary sources receive their own entry.
+        options (list[str]): Names from :data:`QUERY_STRATEGIES`, in order.
+
+    Returns:
+        tuple[list[str], list[str], list[str], list[str]]: Parents, children,
+        synonyms and labels, deduplicated in first-seen order.
+    """
     parents, children, synonyms, labels = [], [], [], []
     for option in options:
         strategy = QUERY_STRATEGIES.get(option)

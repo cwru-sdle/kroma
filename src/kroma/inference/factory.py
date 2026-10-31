@@ -1,3 +1,10 @@
+"""Create chat and embedding models by backend name.
+
+Backends are looked up in :data:`CHAT_BACKENDS` and :data:`EMBED_BACKENDS`;
+add your own with :func:`register_chat_backend` and
+:func:`register_embedding_backend`.
+"""
+
 from typing import Type, Dict
 from kroma.utils.env import get_env
 from kroma.config.constants import METADATA, DEFAULT_CHAT_BACKEND, DEFAULT_CHAT_MODEL, DEFAULT_EMBED_MODEL
@@ -21,12 +28,26 @@ EMBED_BACKENDS: Dict[str, Type] = {
 
 
 def register_chat_backend(name: str, provider_cls: Type) -> None:
-    """Register a chat backend plugin."""
+    """Register a chat backend.
+
+    Args:
+        name (str): Backend name, used for the API key variable
+            ``<NAME>_API_KEY``.
+        provider_cls (type): :class:`~kroma.model_providers.providers.ChatProvider`
+            subclass taking ``api_key``.
+    """
     CHAT_BACKENDS[name] = provider_cls
 
 
 def register_embedding_backend(name: str, provider_cls: Type) -> None:
-    """Register an embedding backend plugin."""
+    """Register an embedding backend.
+
+    Args:
+        name (str): Backend name.
+        provider_cls (type):
+            :class:`~kroma.model_providers.providers.EmbeddingProvider`
+            subclass taking ``model_name``.
+    """
     EMBED_BACKENDS[name] = provider_cls
 
 
@@ -34,8 +55,23 @@ def create_inference_model(
     backend: str,
     model_name: str = DEFAULT_CHAT_MODEL,
 ) -> BaseModel:
-    """
-    instantiate a ChatProvider and wrap it in BaseModel
+    """Create a chat model for ``backend``.
+
+    The API key is read from the environment variable
+    ``<BACKEND>_API_KEY`` (for example ``OPENAI_API_KEY`` or
+    ``TOGETHERAI_API_KEY``), and per-token prices from
+    :data:`kroma.config.constants.METADATA`.
+
+    Args:
+        backend (str): Name in :data:`CHAT_BACKENDS`.
+        model_name (str): Provider model name.
+
+    Returns:
+        BaseModel: The wrapped provider.
+
+    Raises:
+        ValueError: If the backend is not registered.
+        Exception: If the API key variable is not set.
     """
     ProviderCls = CHAT_BACKENDS.get(backend)
     if ProviderCls is None:
@@ -61,8 +97,18 @@ def create_embedding_model(
     backend: str,
     model_name: str = DEFAULT_EMBED_MODEL,
 ) -> BaseEmbeddingModel:
-    """
-    instantiate an EmbeddingProvider and wrap it in BaseEmbeddingModel
+    """Create an embedding model for ``backend``.
+
+    Args:
+        backend (str): Name in :data:`EMBED_BACKENDS`, such as
+            ``"huggingface"`` or ``"sentence-transformers"``.
+        model_name (str): Model id, such as a Hugging Face model name.
+
+    Returns:
+        BaseEmbeddingModel: The wrapped provider.
+
+    Raises:
+        ValueError: If the backend is not registered.
     """
     ProviderCls = EMBED_BACKENDS.get(backend)
     if ProviderCls is None:
@@ -80,8 +126,18 @@ def generate_response(
     include_tokens: bool = False,
     **kwargs,
 ):
-    """
-    convenience wrapper: spins up a chat model and returns its generated reply.
+    """Create a chat model and return its reply to one prompt.
+
+    Args:
+        chat_backend (str): Name in :data:`CHAT_BACKENDS`.
+        system_prompt (str): System message.
+        prompt (str): User message.
+        model_name (str): Provider model name.
+        include_tokens (bool): Also return token counts.
+        **kwargs: Passed to :meth:`BaseModel.generate`.
+
+    Returns:
+        str | tuple: The reply, or ``(reply, input_tokens, output_tokens)``.
     """
     model = create_inference_model(chat_backend, model_name)
     return model.generate(

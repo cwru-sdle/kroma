@@ -39,18 +39,58 @@ from kroma.utils.file import load_cache, load_config
 
 
 class MatchingRun:
-    """One KROMA evaluation over a configured dataset and model."""
+    """One KROMA evaluation over a configured dataset and model.
+
+    The run follows a template of three steps: :meth:`prepare` loads configs,
+    builds the matching task, the merged graph and the retrieval stores;
+    :meth:`score_pairs` asks the model about each sampled pair and refines the
+    graph partition; :meth:`finish` runs a last offline refinement and writes
+    the metrics file.
+
+    Configs are read relative to the working directory, from
+    ``experiments/configs/method/<llm>/<method_config>.jsonl``,
+    ``experiments/configs/datasets/<task>.json`` and
+    ``experiments/configs/dictionary.json``. Predictions are written to
+    ``results/`` and expert-review questions to ``reviews/``.
+
+    Args:
+        args (argparse.Namespace): Run flags from :mod:`kroma.cli`
+            (``method_config``, ``llm``, ``size``, ``reasoning``,
+            ``baseline``, ``active_learning``, ``compare_models``, ``bisim``,
+            ``debate``).
+        listener (MetricsListener | None): Collector for token counts and
+            refinement timings. A new :class:`~kroma.observers.MetricsListener`
+            is created when omitted.
+
+    Example:
+        >>> from kroma.cli import build_run_parser
+        >>> args = build_run_parser().parse_args(
+        ...     ["--method_config", "kroma", "--llm", "gpt-4o-mini"])
+        >>> metrics = MatchingRun(args).execute()  # doctest: +SKIP
+    """
 
     def __init__(self, args, listener=None):
         self.args = args
         self.listener = listener or MetricsListener()
 
     def execute(self) -> dict:
+        """Run :meth:`prepare`, :meth:`score_pairs` and :meth:`finish`.
+
+        Returns:
+            dict: The run summary written by :meth:`finish`.
+        """
         self.prepare()
         self.score_pairs()
         return self.finish()
 
     def prepare(self) -> None:
+        """Load configs and build everything the scoring loop needs.
+
+        Seeds :mod:`random`, configures logging to ``logs/kroma.log``, opens
+        the prediction and review files, builds the matching task, merges the
+        two ontology graphs and computes node ranks, and fills one vector
+        store per ontology with combined text and node2vec embeddings.
+        """
         random.seed(RANDOM_SEED)
         self._configure_logging()
         self._load_configs()
@@ -72,6 +112,14 @@ class MatchingRun:
         self.started = time.time()
 
     def score_pairs(self) -> None:
+        """Ask the model about each sampled alignment pair.
+
+        The pairs are subsampled by the ``size`` flag (see
+        :data:`~kroma.config.constants.EVAL_SIZE_FRACTIONS`). Pairs already in
+        the prediction file are skipped, so an interrupted run resumes. Every
+        :data:`~kroma.config.constants.OFFLINE_REFINE_EVERY` pairs the graph
+        partition is refined offline.
+        """
         limit = int(len(self.task_aligns) * EVAL_SIZE_FRACTIONS[self.args.size])
         if limit < len(self.task_aligns):
             self.task_aligns = random.sample(self.task_aligns, limit)
@@ -91,6 +139,16 @@ class MatchingRun:
             self._score_pair(src_key, tgt_key, label, f1)
 
     def finish(self) -> dict:
+        """Run a final offline refinement and write the metrics file.
+
+        The summary is saved next to the prediction file with a
+        ``.metrics.json`` suffix.
+
+        Returns:
+            dict: Method, datasets, model, precision/recall/F1, API counters,
+            estimated cost (see :func:`kroma.costs.api_cost`) and refinement
+            timings.
+        """
         timed(self.listener, "offline_refinement")(offline_refine)(
             adj=self.compressed_graph,
             rank_attr=self.rank_attr_map,

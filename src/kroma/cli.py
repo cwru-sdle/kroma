@@ -1,4 +1,9 @@
-"""Command line for KROMA experiments."""
+"""Command line for KROMA experiments.
+
+The ``kroma`` console script calls :func:`main`. ``kroma run`` and the bare
+flag form (``kroma --method_config ... --llm ...``) both start one
+:class:`~kroma.pipeline.MatchingRun`.
+"""
 
 import argparse
 import sys
@@ -19,6 +24,12 @@ def _add_run_args(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Build the top-level ``kroma`` parser with its ``run`` subcommand.
+
+    Returns:
+        argparse.ArgumentParser: Parser whose ``command`` attribute is
+        ``"run"`` when the subcommand is used.
+    """
     parser = argparse.ArgumentParser(
         prog="kroma",
         description="Evaluate KROMA ontology matching",
@@ -30,7 +41,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def build_run_parser() -> argparse.ArgumentParser:
-    """Parser used by `kroma run` and by the original `python -m main` flags."""
+    """Build the parser for the flag-only form of a run.
+
+    This accepts the same flags as ``kroma run`` without the subcommand, as
+    the original ``python -m main`` script did.
+
+    Returns:
+        argparse.ArgumentParser: Parser for the run flags.
+    """
     parser = argparse.ArgumentParser(
         prog="kroma",
         description="Evaluate KROMA ontology matching",
@@ -40,12 +58,26 @@ def build_run_parser() -> argparse.ArgumentParser:
 
 
 class RunCommand:
-    """Command that executes one matching experiment."""
+    """Command that executes one matching experiment.
+
+    Args:
+        args (argparse.Namespace): Parsed run flags, as produced by
+            :func:`build_parser` or :func:`build_run_parser`.
+    """
 
     def __init__(self, args):
         self.args = args
 
     def execute(self) -> None:
+        """Run the experiment.
+
+        The pipeline is imported lazily so ``kroma --help`` works without the
+        optional model dependencies.
+
+        Raises:
+            SystemExit: If a model dependency is missing; the message names
+                the package and how to install the ``models`` extra.
+        """
         try:
             from kroma.pipeline import MatchingRun
         except ModuleNotFoundError as exc:
@@ -58,6 +90,15 @@ class RunCommand:
 
 
 def main(argv=None) -> int:
+    """Entry point of the ``kroma`` console script.
+
+    Args:
+        argv (list[str] | None): Arguments without the program name. Defaults
+            to ``sys.argv[1:]``.
+
+    Returns:
+        int: Process exit code, ``0`` on success.
+    """
     argv = sys.argv[1:] if argv is None else list(argv)
     if not argv or argv[0] in ("-h", "--help"):
         build_parser().print_help()

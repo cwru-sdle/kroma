@@ -1,7 +1,31 @@
+"""Bisimulation-based partition refinement of the merged ontology graph.
+
+Nodes with the same rank and the same relations to other blocks are grouped
+into blocks. :func:`offline_refine` computes a partition from scratch and
+returns the compressed graph; :func:`online_refine` updates the partition as
+each model answer arrives.
+"""
+
 from typing import Any, Dict, Set, List, Tuple
 from collections import defaultdict
 
 def offline_refine(adj: Dict[Any, List[Any]], rank_attr: Dict[Any, int]) -> Dict[Any, List[Any]]:
+    """Partition nodes by rank, split blocks by their edges, and compress the graph.
+
+    Nodes start in one block per rank. For each rank ``i``, a block lying
+    entirely below rank ``i`` is split in two when a rank-``i`` node is
+    linked to some but not all of its members. Each block is then collapsed
+    to its smallest member (by string order).
+
+    Args:
+        adj (dict): Parent to children.
+        rank_attr (dict): Node rank from
+            :func:`kroma.algorithms.utils.compute_node_ranks`.
+
+    Returns:
+        dict: Compressed graph from block representative to the list of child
+        representatives, without self loops.
+    """
     V = set(adj)
     rho = max(rank_attr.values(), default=0)
 
@@ -68,6 +92,28 @@ def online_refine(
     delta_edges: List[Tuple[Any, Any]],
     pred: int
 ) -> Tuple[Dict[Any, Any], List[Tuple[Any, Any]]]:
+    """Update the block partition after a model answers about new edges.
+
+    A Yes (``pred == 1``) for nodes in different blocks merges the blocks:
+    the lower-ranked block joins the higher-ranked one, and on equal ranks
+    parents and children are moved across. A No (``pred == 0``) for nodes in
+    the same block splits off the members that are not bisimilar to ``v``
+    and records the edge as a question for an expert.
+
+    ``full_graph``, ``rank_attr``, ``equiv_classes`` and ``delta_edges`` are
+    updated in place.
+
+    Args:
+        full_graph (dict): Parent to set of children; new edges are added.
+        rank_attr (dict): Node rank; new nodes get rank 0.
+        equiv_classes (dict): Node to its block representative.
+        delta_edges (list[tuple]): ``(u, v)`` edges the model judged.
+        pred (int): The model's answer, 1 or 0.
+
+    Returns:
+        tuple: ``(equiv_classes, expert_questions)``, where
+        ``expert_questions`` lists the ``(u, v)`` edges that caused a split.
+    """
     # ensure all nodes are present
     for u, v in delta_edges:
         full_graph.setdefault(u, set())

@@ -1,14 +1,24 @@
+"""Load configs and caches, and open prediction files."""
+
 import json
 import os
 from pathlib import Path
 from typing import Tuple, Set, TextIO, Dict, Any, List
 
 def load_config(filepath: str) -> Any:
-    """
-    Load configuration from a JSON or JSONL file. Returns:
-      - dict for .json
-      - dict for single-line .jsonl
-      - list of dicts for multi-line .jsonl
+    """Load a JSON config file.
+
+    The file is parsed as a single JSON document, so a ``.jsonl`` method
+    config must hold one object.
+
+    Args:
+        filepath (str | pathlib.Path): Config path.
+
+    Returns:
+        Any: The parsed JSON.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
     """
     path = Path(filepath)
     if not path.exists():
@@ -19,10 +29,22 @@ def load_config(filepath: str) -> Any:
 
 
 def load_cache(filepath: str, key_field: str = 'concept_code') -> Dict[str, Dict[str, List[Any]]]:
-    """
-    Load a JSONL cache file, merging entries by the given key_field.
-    Each entry should have lists under 'parents', 'children', 'synonyms', 'labels'.
-    Returns a dict mapping key -> merged record with lists.
+    """Load a JSONL context cache, merging lines that share a key.
+
+    Each line is an object with ``key_field`` and optional ``parents``,
+    ``children``, ``synonyms`` and ``labels`` lists. Lines without the key
+    are skipped.
+
+    Args:
+        filepath (str | pathlib.Path): Cache path.
+        key_field (str): Field holding the concept code.
+
+    Returns:
+        dict[str, dict[str, list]]: Concept code to deduplicated lists (in no
+        particular order).
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
     """
     cache: Dict[str, Dict[str, Set[Any]]] = {}
     path = Path(filepath)
@@ -60,6 +82,23 @@ def get_predicted_pairs_and_file(
     compare_models: bool = False,
     bisim: bool = True
 ) -> Tuple[Set[Tuple[str,str]], TextIO]:
+    """Open the prediction file for a run and load what it already holds.
+
+    The file is ``results/<mode>/<task_name>/<agent>_<task_name>.jsonl``
+    where ``mode`` is ``baseline`` or ``results``. The remaining flags are
+    accepted for callers and do not change the path.
+
+    Args:
+        task_name (str): Task name.
+        method_name (str): Method name.
+        agent_name (str): Model name; ``/`` becomes ``-``.
+        baseline (bool): Write under ``results/baseline``.
+
+    Returns:
+        tuple: ``(keys, rows, handle)``: the set of predicted
+        ``(source, target)`` codes, the existing rows, and the file opened for
+        appending.
+    """
     # decide mode folder
     mode = "baseline" if baseline else "results"
 

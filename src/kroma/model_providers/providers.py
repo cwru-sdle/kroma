@@ -1,8 +1,14 @@
+"""Interfaces that chat and embedding backends implement."""
+
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Tuple
 
 class ChatProvider(ABC):
-    """abstract interface for all chat‐completion backends."""
+    """Interface for chat-completion backends.
+
+    Register an implementation with
+    :func:`kroma.inference.factory.register_chat_backend`.
+    """
     @abstractmethod
     def create_completion(
         self,
@@ -42,7 +48,11 @@ def parse_chat_response(response: Any, include_tokens: bool) -> Tuple[str, int, 
 
 
 class EmbeddingProvider(ABC):
-    """abstract interface for all embedding backends."""
+    """Interface for embedding backends.
+
+    Register an implementation with
+    :func:`kroma.inference.factory.register_embedding_backend`.
+    """
     @abstractmethod
     def embed(self, texts: List[str]) -> List[List[float]]:
         """
