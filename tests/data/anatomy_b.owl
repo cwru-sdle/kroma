@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/b#"
+         xml:base="http://example.org/b"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+  <owl:Class rdf:about="http://example.org/b#BodyOrgan"><rdfs:label>body organ</rdfs:label></owl:Class>
+  <owl:Class rdf:about="http://example.org/b#Cardiac_Organ">
+    <rdfs:label>cardiac organ</rdfs:label>
+    <skos:altLabel>Heart</skos:altLabel>
+    <rdfs:subClassOf rdf:resource="http://example.org/b#BodyOrgan"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/b#CardiacValve">
+    <rdfs:subClassOf rdf:resource="http://example.org/b#Cardiac_Organ"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/b#Renal_Organ">
+    <rdfs:label>renal organ</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://example.org/b#BodyOrgan"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/b#Pulmonary_Organ">
+    <rdfs:label>lungs</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://example.org/b#BodyOrgan"/>
+  </owl:Class>
+</rdf:RDF>
