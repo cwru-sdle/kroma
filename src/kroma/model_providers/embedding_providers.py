@@ -1,9 +1,7 @@
 """Embedding providers backed by Hugging Face models."""
 
-import torch
 from typing import List
-from transformers import AutoTokenizer, BertTokenizerFast, AutoModel
-from sentence_transformers import SentenceTransformer, models
+
 from .providers import EmbeddingProvider
 
 class HFEmbeddingProvider(EmbeddingProvider):
@@ -16,12 +14,15 @@ class HFEmbeddingProvider(EmbeddingProvider):
             ``"allenai/scibert_scivocab_uncased"``.
     """
     def __init__(self, model_name: str):
+        import torch
+        from transformers import AutoModel, AutoTokenizer
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
 
     def embed(self, texts: List[str]) -> List[List[float]]:
         """Return the ``[CLS]`` vector of each string."""
+        import torch
         enc = self.tokenizer(
             texts,
             padding=True,
@@ -45,6 +46,8 @@ class STEmbeddingProvider(EmbeddingProvider):
         model_name (str): Hugging Face model id.
     """
     def __init__(self, model_name: str):
+        import torch
+        from sentence_transformers import SentenceTransformer, models
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         word_embedding_model = models.Transformer(
             model_name,
