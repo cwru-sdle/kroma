@@ -46,7 +46,7 @@
   --llm meta-llama/Llama-3.3-70B-Instruct-Turbo-Free \
   --baseline</code></pre>
           <p><code>--debate</code> is a boolean flag. Omit it for a single model.</p>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/cli.py">cli.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/cli.py">cli.py</a></p>
         </section>
 
         <section id="run" class="api-section">
@@ -62,7 +62,7 @@ MatchingRun.execute() -&gt; dict</code></pre>
             <tr><td><code>finish()</code></td><td>Run the final offline refinement and write the metrics JSON.</td></tr>
           </table>
           <p><code>MetricsListener</code> collects token counts and refinement timings for that run.</p>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/pipeline.py">pipeline.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/pipeline.py">pipeline.py</a></p>
         </section>
 
         <section id="loaders" class="api-section">
@@ -71,7 +71,7 @@ MatchingRun.execute() -&gt; dict</code></pre>
           <p>Base class for alignment sources. <code>CsvAlignmentLoader</code> reads benchmark CSVs. <code>OwlOntologyLoader</code> reads a class hierarchy from OWL.</p>
           <pre class="signature"><code>CsvAlignmentLoader(csv_paths, dataset="ncit-doid").load()
   -&gt; (source_graph, target_graph, alignments)</code></pre>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/tasks/loader.py">loader.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/tasks/loader.py">loader.py</a></p>
         </section>
 
         <section id="query" class="api-section">
@@ -87,7 +87,7 @@ MatchingRun.execute() -&gt; dict</code></pre>
           </table>
           <pre class="signature"><code>register_query_strategy(name, strategy) -&gt; None
 query(concept_code, pcmap, dictionary, options) -&gt; parents, children, synonyms, labels</code></pre>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/tasks/query_engine.py">query_engine.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/tasks/query_engine.py">query_engine.py</a></p>
         </section>
 
         <section id="models" class="api-section">
@@ -104,7 +104,7 @@ register_embedding_backend(name, provider_cls) -&gt; None</code></pre>
             <tr><td><code>SingleModelInference</code></td><td>One agent, one round.</td></tr>
             <tr><td><code>DebateInference</code></td><td>One agent per config, for the configured number of rounds.</td></tr>
           </table>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/inference/factory.py">factory.py</a> <a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/agents/inference.py">inference.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/inference/factory.py">factory.py</a> <a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/agents/inference.py">inference.py</a></p>
         </section>
 
         <section id="retrieval" class="api-section">
@@ -113,7 +113,7 @@ register_embedding_backend(name, provider_cls) -&gt; None</code></pre>
           <pre class="signature"><code>VectorStore.add(ext_ids, embeddings) -&gt; None
 VectorStore.query(query_emb, top_k=5) -&gt; list[(id, score)]</code></pre>
           <p>Combined embeddings use <code>compute_combined_embeddings</code> with concatenation of text and Node2Vec vectors.</p>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/retrieval/vector_store.py">vector_store.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/retrieval/vector_store.py">vector_store.py</a></p>
         </section>
 
         <section id="refinement" class="api-section">
@@ -123,14 +123,14 @@ VectorStore.query(query_emb, top_k=5) -&gt; list[(id, score)]</code></pre>
 online_refine(full_graph, rank_attr, equiv_classes, delta_edges, pred)
   -&gt; (equiv_classes, expert_questions)</code></pre>
           <p><code>compute_node_ranks</code> assigns each node its longest distance from a root. <code>PredictionRepository</code> appends accepted rows, and <code>ReviewRepository</code> records expert questions.</p>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/algorithms/refinement.py">refinement.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/algorithms/refinement.py">refinement.py</a></p>
         </section>
 
         <section id="metrics" class="api-section">
           <p class="eyebrow">kroma.metrics.scoring</p>
           <h2>calculate_metrics</h2>
           <pre class="signature"><code>calculate_metrics(y_true, y_pred, positive_label=1) -&gt; (precision, recall, f1)</code></pre>
-          <p><a class="source-link" href="https://github.com/lamng3/kroma/blob/main/src/kroma/metrics/scoring.py">scoring.py</a></p>
+          <p><a class="source-link" href="https://github.com/cwru-sdle/kroma/blob/main/src/kroma/metrics/scoring.py">scoring.py</a></p>
         </section>
 
       </div>

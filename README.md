@@ -27,7 +27,7 @@
 ## ⚡ Quick start
 
 ```bash
-git clone https://github.com/lamng3/kroma.git
+git clone https://github.com/cwru-sdle/kroma.git
 cd kroma
 ./setup.sh
 source .venv/bin/activate

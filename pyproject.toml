@@ -47,7 +47,7 @@ kroma = "kroma.cli:main"
 
 [project.urls]
 Paper = "https://arxiv.org/abs/2507.14032"
-Repository = "https://github.com/lamng3/kroma"
+Repository = "https://github.com/cwru-sdle/kroma"
 
 [tool.setuptools.packages.find]
 where = ["src"]
