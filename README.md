@@ -7,12 +7,11 @@
 [![ISWC 2025](https://img.shields.io/badge/ISWC-2025-b31b1b)](https://doi.org/10.1007/978-3-032-09527-5_34)
 [![arXiv](https://img.shields.io/badge/arXiv-2507.14032-b31b1b)](https://arxiv.org/abs/2507.14032)
 [![PyPI](https://img.shields.io/pypi/v/kroma-om)](https://pypi.org/project/kroma-om/)
-[![Docs](https://readthedocs.org/projects/kroma/badge/?version=latest)](https://kroma.readthedocs.io/)
-[![Manual](https://img.shields.io/badge/docs-manual-8b5cf6)](https://lamng3.com/kroma/)
+[![Docs](https://readthedocs.org/projects/kroma/badge/?version=latest)](https://kroma.readthedocs.io/en/latest/)
 [![Python](https://img.shields.io/badge/python-3.12-3b82f6)](https://github.com/cwru-sdle/kroma/blob/main/pyproject.toml)
 [![License: CC BY 4.0](https://img.shields.io/badge/license-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-[⚡ Quick start](#-quick-start) · [✨ What it is](#-what-it-is) · [📊 Results](#-results) · [🔧 Usage](#-usage) · [📝 Citation](#-citation)
+[📖 Docs](https://kroma.readthedocs.io/en/latest/) · [⚡ Quick start](#-quick-start) · [✨ What it is](#-what-it-is) · [📊 Results](#-results) · [🔧 Usage](#-usage) · [📝 Citation](#-citation)
 
 </div>
 
@@ -43,7 +42,8 @@ result = kroma.match("mouse.owl", "human.owl", model="gpt-4o-mini")
 result.save("alignments.csv")        # or .tsv, or .rdf (OAEI format)
 ```
 
-The docs are at [kroma.readthedocs.io](https://kroma.readthedocs.io/).
+The full documentation, with the options and the API reference, is at
+[kroma.readthedocs.io](https://kroma.readthedocs.io/en/latest/).
 To reproduce the paper's experiments, work from a clone, since runs read
 `experiments/configs/`:
 
@@ -273,7 +273,7 @@ src/kroma/         Installable package
   repository.py    Prediction JSONL and expert-review CSV
 experiments/       Dataset and method configs (data is downloaded separately)
 scripts/           Reproduction scripts
-docs/              Sphinx documentation (kroma.readthedocs.io)
+docs/              Sphinx source of kroma.readthedocs.io
 full.pdf           Full version of the paper
 ```
 

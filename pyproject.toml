@@ -55,7 +55,7 @@ kroma = "kroma.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/cwru-sdle/kroma"
-Documentation = "https://kroma.readthedocs.io/"
+Documentation = "https://kroma.readthedocs.io/en/latest/"
 Repository = "https://github.com/cwru-sdle/kroma"
 Issues = "https://github.com/cwru-sdle/kroma/issues"
 Paper = "https://doi.org/10.1007/978-3-032-09527-5_34"
