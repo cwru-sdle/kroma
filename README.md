@@ -6,8 +6,10 @@
 
 [![ISWC 2025](https://img.shields.io/badge/ISWC-2025-b31b1b)](https://doi.org/10.1007/978-3-032-09527-5_34)
 [![arXiv](https://img.shields.io/badge/arXiv-2507.14032-b31b1b)](https://arxiv.org/abs/2507.14032)
+[![PyPI](https://img.shields.io/pypi/v/kroma-om)](https://pypi.org/project/kroma-om/)
+[![Docs](https://readthedocs.org/projects/kroma/badge/?version=latest)](https://kroma.readthedocs.io/)
 [![Manual](https://img.shields.io/badge/docs-manual-8b5cf6)](https://lamng3.com/kroma/)
-[![Python](https://img.shields.io/badge/python-3.12-3b82f6)](pyproject.toml)
+[![Python](https://img.shields.io/badge/python-3.12-3b82f6)](https://github.com/cwru-sdle/kroma/blob/main/pyproject.toml)
 [![License: CC BY 4.0](https://img.shields.io/badge/license-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
 
 [⚡ Quick start](#-quick-start) · [✨ What it is](#-what-it-is) · [📊 Results](#-results) · [🔧 Usage](#-usage) · [📝 Citation](#-citation)
@@ -21,10 +23,19 @@
 </p>
 
 > [!NOTE]
-> **Published at ISWC 2025** (Research Track, LNCS). The [full version](full.pdf),
+> **Published at ISWC 2025** (Research Track, LNCS). The [full version](https://github.com/cwru-sdle/kroma/blob/main/full.pdf),
 > with every table, is in this repository.
 
 ## ⚡ Quick start
+
+```bash
+pip install "kroma-om[models]"   # the package imports as `kroma`
+kroma --help
+```
+
+The API reference is at [kroma.readthedocs.io](https://kroma.readthedocs.io/).
+To reproduce the paper's experiments, work from a clone, since runs read
+`experiments/configs/`:
 
 ```bash
 git clone https://github.com/cwru-sdle/kroma.git
@@ -74,7 +85,7 @@ two refer to the same thing, and refines the alignment as answers arrive.
 | ENVO–SWEET | **93.18** <sub>GPT-4o-mini</sub> | 83.70 <sub>MILA</sub> |
 | MI–MatOnto | **61.25** | 32.97 <sub>MILA</sub> |
 
-<sub>F1 (%). KROMA with Llama-3.3-70B unless noted. Baselines are MILA, OLaLa, and LLM4OM with their reported models; each row shows the best of them · Table 3 of [full.pdf](full.pdf)</sub>
+<sub>F1 (%). KROMA with Llama-3.3-70B unless noted. Baselines are MILA, OLaLa, and LLM4OM with their reported models; each row shows the best of them · Table 3 of [full.pdf](https://github.com/cwru-sdle/kroma/blob/main/full.pdf)</sub>
 
 </div>
 
@@ -96,7 +107,7 @@ MI–MatOnto.
 | YAGO–Wikidata | **95.54** | 91.98 | 89.74 |
 | MI–MatOnto | **61.25** | 59.95 | 55.00 |
 
-<sub>F1 (%), Llama-3.3-70B · Table 3 of [full.pdf](full.pdf)</sub>
+<sub>F1 (%), Llama-3.3-70B · Table 3 of [full.pdf](https://github.com/cwru-sdle/kroma/blob/main/full.pdf)</sub>
 
 | Track | Qwen2.5-1.5B | GPT-4o-mini | Llama-3.3-70B |
 |:--|:--:|:--:|:--:|
@@ -107,7 +118,7 @@ MI–MatOnto.
 | ENVO–SWEET | 79.8 | **93.2** | 92.0 |
 | MI–MatOnto | 61.3 | 60.9 | **62.2** |
 
-<sub>F1 (%) · Table 4 of [full.pdf](full.pdf)</sub>
+<sub>F1 (%) · Table 4 of [full.pdf](https://github.com/cwru-sdle/kroma/blob/main/full.pdf)</sub>
 
 </div>
 
@@ -128,14 +139,14 @@ MI–MatOnto.
 | MI–MatOnto | 43.04% | 41.66% | 41.81% | 13.31× |
 | **Overall** | **25.92%** | **25.61%** | **26.36%** | **9.03×** |
 
-<sub>Table 9 of [full.pdf](full.pdf)</sub>
+<sub>Table 9 of [full.pdf](https://github.com/cwru-sdle/kroma/blob/main/full.pdf)</sub>
 
 | Model | Total tokens | Output tokens | Tokens per call |
 |:--|--:|--:|--:|
 | Llama-3.3-70B | 480K | 15K | 470 |
 | DR1D-Llama-3-70B (deep reasoning) | 620K | 130K | 605 |
 
-<sub>All calls of one run · Table 10 of [full.pdf](full.pdf)</sub>
+<sub>All calls of one run · Table 10 of [full.pdf](https://github.com/cwru-sdle/kroma/blob/main/full.pdf)</sub>
 
 | ENVO–SWEET, 1,000 candidate pairs | Seconds |
 |:--|--:|
@@ -143,7 +154,7 @@ MI–MatOnto.
 | Offline refinement | 68 |
 | Online refinement | 14 |
 
-<sub>§ KROMA Runtime of [full.pdf](full.pdf)</sub>
+<sub>§ KROMA Runtime of [full.pdf](https://github.com/cwru-sdle/kroma/blob/main/full.pdf)</sub>
 
 </div>
 
@@ -246,7 +257,7 @@ src/kroma/         Installable package
   repository.py    Prediction JSONL and expert-review CSV
 experiments/       Dataset and method configs (data is downloaded separately)
 scripts/           Reproduction scripts
-docs/              Documentation pages
+docs/              Documentation pages; docs/source is the Sphinx site
 full.pdf           Full version of the paper
 ```
 
@@ -274,4 +285,4 @@ pytest -q
 
 ## License
 
-[CC BY 4.0](LICENSE). Copyright (c) 2025 Lam Nguyen, Erika Barcelos, Roger French, and Yinghui Wu.
+[CC BY 4.0](https://github.com/cwru-sdle/kroma/blob/main/LICENSE). Copyright (c) 2025 Lam Nguyen, Erika Barcelos, Roger French, and Yinghui Wu.
