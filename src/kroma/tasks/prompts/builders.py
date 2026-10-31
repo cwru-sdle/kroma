@@ -4,7 +4,7 @@ A concept is passed as a tuple ``(term, parents, children, synonyms,
 labels)``, as returned by :func:`kroma.agents.inference.expand_term`.
 """
 
-from typing import List, Tuple, Dict, Any, Optional
+from typing import List, Tuple, Any, Optional
 
 from .templates import SYSTEM_PROMPT, TASK_PROMPT, ROUND_PROMPT, LAST_ROUND_PROMPT
 

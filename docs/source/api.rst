@@ -48,9 +48,6 @@ Agents and inference
 
 .. automodule:: kroma.agents.utils
 
-.. automodule:: kroma.agents.prompter
-   :no-members:
-
 Models
 ------
 

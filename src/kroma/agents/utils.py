@@ -78,7 +78,3 @@ def active_learning_score(
     """
     noise = random.gauss(0,1) * epsilon * f1_score
     return (gamma + delta) * confidence - 11 * delta + noise
-
-def simple_match(src: Tuple, tgt: Tuple) -> bool:
-    """Return whether two concept tuples share the same term (a trivial bisimulation check)."""
-    return src[0] == tgt[0]

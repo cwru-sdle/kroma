@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from kroma.agents.prompter import inference as agent_inference
+from kroma.agents.inference import infer as agent_inference
 from kroma.algorithms.node2vec import compute_combined_embeddings
 from kroma.algorithms.refinement import offline_refine, online_refine
 from kroma.algorithms.utils import compute_node_ranks, merge_graphs

@@ -230,7 +230,7 @@ Together models read `TOGETHERAI_API_KEY`, and OpenAI models read
 `kroma run` reproduces the paper's benchmarks. To align your own ontologies,
 use `kroma match` (see Quick start).
 
-The same flags work with `python -m main`. A run skips pairs it has already
+A run skips pairs it has already
 scored, so an interrupted run resumes where it stopped. From Python,
 `kroma.pipeline.MatchingRun(args).execute()` takes the same arguments and
 returns the metrics dictionary.
@@ -273,7 +273,7 @@ src/kroma/         Installable package
   repository.py    Prediction JSONL and expert-review CSV
 experiments/       Dataset and method configs (data is downloaded separately)
 scripts/           Reproduction scripts
-docs/              Documentation pages; docs/source is the Sphinx site
+docs/              Sphinx documentation (kroma.readthedocs.io)
 full.pdf           Full version of the paper
 ```
 

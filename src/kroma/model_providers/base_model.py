@@ -1,6 +1,6 @@
 """Provider-independent wrappers for chat and embedding models."""
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from kroma.config.arguments import (
     ModelArguments, 
     ModelMetadata, 

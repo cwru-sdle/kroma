@@ -59,7 +59,3 @@ class VectorStore:
         # get top_k indices
         idxs = np.argsort(-sims)[:top_k]
         return [(self.ids[i], float(sims[i])) for i in idxs]
-
-    def get_text(self, ext_id: Any) -> str:
-        """Return the text for an id; currently the id as a string."""
-        return str(ext_id)

@@ -109,8 +109,7 @@ def build_parser() -> argparse.ArgumentParser:
 def build_run_parser() -> argparse.ArgumentParser:
     """Build the parser for the flag-only form of a run.
 
-    This accepts the same flags as ``kroma run`` without the subcommand, as
-    the original ``python -m main`` script did.
+    This accepts the same flags as ``kroma run`` without the subcommand.
 
     Returns:
         argparse.ArgumentParser: Parser for the run flags.

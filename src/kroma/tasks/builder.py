@@ -7,32 +7,6 @@ from typing import List, Tuple, Dict, Any
 from kroma.tasks.query_engine import query
 
 
-def build_ontology_expansion_task(
-    G: Dict[Any, List[Any]],
-    keep_ratio: float = 0.5
-) -> Tuple[Dict[Any, set], Dict[Any, set], Dict[Any, List[Any]]]:
-    """Split each node's neighbours into a kept part and an expansion part.
-
-    Args:
-        G (dict): Node to list of neighbours.
-        keep_ratio (float): Fraction of each neighbour list to keep (at least
-            one when the list is non-empty).
-
-    Returns:
-        tuple: ``(G_keep, G_expand, G)``. ``G_keep`` is the subset to show in
-        the prompt, ``G_expand`` the remainder for expansion context, and
-        ``G`` the input graph.
-    """
-    G_keep, G_expand = defaultdict(set), defaultdict(set)
-    for node, neighbors in G.items():
-        n = len(neighbors)
-        k = max(1, int(n * keep_ratio)) if n else 0
-        kept = set(random.sample(neighbors, k)) if k else set()
-        G_keep[node] = kept
-        G_expand[node] = set(neighbors) - kept
-    return G_keep, G_expand, G
-
-
 def build_parent_child_map(
     G: Dict[Tuple[str, str], Any]
 ) -> Tuple[Dict[str, set], Dict[str, set]]:

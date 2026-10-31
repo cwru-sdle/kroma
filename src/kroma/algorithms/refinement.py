@@ -26,7 +26,6 @@ def offline_refine(adj: Dict[Any, List[Any]], rank_attr: Dict[Any, int]) -> Dict
         dict: Compressed graph from block representative to the list of child
         representatives, without self loops.
     """
-    V = set(adj)
     rho = max(rank_attr.values(), default=0)
 
     # build B_i and initial partition P = {B_0, …, B_rho}
