@@ -7,10 +7,30 @@ SPARQL endpoints and ConceptNet), asks one or more language models for a
 Yes/No answer with a confidence, and refines a bisimulation-based partition of
 the merged ontology graph as answers arrive.
 
-The usual entry points are the ``kroma`` command (:mod:`kroma.cli`) and
+To align two ontologies, call :func:`kroma.match` (or run ``kroma match``).
+To reproduce the paper's benchmarks, use ``kroma run`` and
 :class:`kroma.pipeline.MatchingRun`.
+
+Example:
+    >>> import kroma
+    >>> result = kroma.match("source.owl", "target.owl")  # doctest: +SKIP
+    >>> result.save("alignments.csv")  # doctest: +SKIP
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-__all__ = ["__version__"]
+from kroma.alignment import Alignment, MatchResult, save_alignments
+from kroma.matcher import find_candidates, match
+from kroma.ontology import Concept, Ontology, load_ontology
+
+__all__ = [
+    "__version__",
+    "match",
+    "find_candidates",
+    "load_ontology",
+    "Ontology",
+    "Concept",
+    "Alignment",
+    "MatchResult",
+    "save_alignments",
+]

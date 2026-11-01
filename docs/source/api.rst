@@ -2,9 +2,19 @@ API reference
 =============
 
 .. automodule:: kroma
+   :no-members:
 
-Running a match
----------------
+Matching
+--------
+
+.. automodule:: kroma.matcher
+
+.. automodule:: kroma.ontology
+
+.. automodule:: kroma.alignment
+
+Benchmark runs
+--------------
 
 .. automodule:: kroma.pipeline
 
@@ -37,9 +47,6 @@ Agents and inference
 .. automodule:: kroma.agents.factory
 
 .. automodule:: kroma.agents.utils
-
-.. automodule:: kroma.agents.prompter
-   :no-members:
 
 Models
 ------

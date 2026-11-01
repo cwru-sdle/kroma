@@ -28,21 +28,31 @@ How it works
    (offline refinement). Pairs refinement cannot settle go to an expert
    (:mod:`kroma.algorithms.refinement`).
 
-Quick install
--------------
+Quick start
+-----------
 
 .. code-block:: bash
 
-   pip install "kroma-om[models]"
-   kroma --help
+   pip install kroma-om openai
+   export OPENAI_API_KEY=sk-...
+   kroma match mouse.owl human.owl -o alignments.csv
 
-The distribution is named ``kroma-om``; the Python package is ``kroma``.
+.. code-block:: python
+
+   import kroma
+
+   result = kroma.match("mouse.owl", "human.owl")
+   result.save("alignments.csv")
+
+The distribution is named ``kroma-om``; the Python package is ``kroma``. See
+:doc:`matching` for the options.
 
 .. toctree::
    :maxdepth: 2
    :caption: User guide
 
    installation
+   matching
    usage
    extending
 

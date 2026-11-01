@@ -8,12 +8,15 @@ From PyPI
 
 .. code-block:: bash
 
-   pip install kroma-om            # core: loaders, refinement, metrics, CLI
-   pip install "kroma-om[models]"  # plus the model backends needed for a run
+   pip install kroma-om openai     # kroma.match / kroma match with OpenAI
+   pip install kroma-om together   # ... or with Together AI
+   pip install "kroma-om[models]"  # everything, including benchmark runs
 
-The ``models`` extra installs PyTorch, Transformers, sentence-transformers,
-node2vec, the OpenAI and Together clients, SPARQLWrapper, NLTK and
-scikit-learn. ``kroma --help`` works without it.
+The core package needs no machine-learning framework: :func:`kroma.match`
+with the default lexical retrieval only needs the client of the chat backend
+you use. The ``models`` extra adds PyTorch, Transformers,
+sentence-transformers, node2vec, both chat clients, SPARQLWrapper, NLTK and
+scikit-learn, for neural embedders and ``kroma run``.
 
 From source
 -----------

@@ -1,7 +1,7 @@
 """Graph helpers for ranking and merging ontology hierarchies."""
 
 from collections import defaultdict, deque
-from typing import Dict, Iterable, Any, Tuple, List, Set
+from typing import Dict, Any, Set
 
 def compute_node_ranks(
     graph: Dict[Any, Set[Any]]

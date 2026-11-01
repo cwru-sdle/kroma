@@ -7,7 +7,7 @@ add your own with :func:`register_chat_backend` and
 
 from typing import Type, Dict
 from kroma.utils.env import get_env
-from kroma.config.constants import METADATA, DEFAULT_CHAT_BACKEND, DEFAULT_CHAT_MODEL, DEFAULT_EMBED_MODEL
+from kroma.config.constants import METADATA, DEFAULT_CHAT_MODEL, DEFAULT_EMBED_MODEL
 from kroma.config.arguments import ModelArguments, ModelMetadata, EmbeddingArguments
 
 from kroma.model_providers.base_model import BaseModel, BaseEmbeddingModel

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kroma-om"
-version = "0.1.0"
+version = "0.2.0"
 description = "Ontology matching with knowledge retrieval and large language models"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -30,6 +30,7 @@ dependencies = [
   "python-dotenv",
   "rdflib",
   "requests",
+  "scipy",
 ]
 
 [project.optional-dependencies]
@@ -54,7 +55,7 @@ kroma = "kroma.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/cwru-sdle/kroma"
-Documentation = "https://kroma.readthedocs.io/"
+Documentation = "https://kroma.readthedocs.io/en/latest/"
 Repository = "https://github.com/cwru-sdle/kroma"
 Issues = "https://github.com/cwru-sdle/kroma/issues"
 Paper = "https://doi.org/10.1007/978-3-032-09527-5_34"
