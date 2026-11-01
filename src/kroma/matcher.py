@@ -20,7 +20,7 @@ import re
 import threading
 import zlib
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from scipy import sparse
@@ -136,8 +136,8 @@ def find_candidates(
     src_names, src_owner = _flatten(src)
     tgt_names, tgt_owner = _flatten(tgt)
     model = _resolve_embedder(embedder, src_names + tgt_names)
-    src_vecs = _unit(model.encode(src_names))
-    tgt_vecs = _unit(model.encode(tgt_names))
+    src_vecs = _unit(_encode(model, src_names))
+    tgt_vecs = _unit(_encode(model, tgt_names))
     tgt_t = tgt_vecs.T.tocsr() if sparse.issparse(tgt_vecs) else tgt_vecs.T
     tgt_starts = np.flatnonzero(np.r_[True, tgt_owner[1:] != tgt_owner[:-1]])
     src_starts = np.flatnonzero(np.r_[True, src_owner[1:] != src_owner[:-1]])
@@ -319,6 +319,15 @@ def _flatten(concepts: List[Concept]) -> Tuple[List[str], np.ndarray]:
             names.append(name)
             owner.append(i)
     return names, np.asarray(owner)
+
+
+def _encode(model, texts: List[str], batch_size: int = 128):
+    """Encode in batches, so a neural model never sees the whole ontology at once."""
+    if isinstance(model, LexicalEmbedder):
+        return model.encode(texts)
+    parts = [np.asarray(model.encode(texts[i:i + batch_size]), dtype=np.float32)
+             for i in range(0, len(texts), batch_size)]
+    return np.vstack(parts)
 
 
 def _unit(vectors):

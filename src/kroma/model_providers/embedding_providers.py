@@ -37,38 +37,23 @@ class HFEmbeddingProvider(EmbeddingProvider):
 
     
 class STEmbeddingProvider(EmbeddingProvider):
-    """Embed text with sentence-transformers, mean-pooling token vectors.
+    """Embed text with a sentence-transformers model.
 
-    Inputs are cut to 512 tokens and lower-cased when the model name contains
-    ``"uncased"``. Runs on CUDA when available.
+    A sentence-transformers model (such as
+    ``"sentence-transformers/all-MiniLM-L6-v2"``) uses its own pooling; a
+    plain Hugging Face encoder is mean-pooled. Runs on CUDA when available.
 
     Args:
         model_name (str): Hugging Face model id.
     """
     def __init__(self, model_name: str):
         import torch
-        from sentence_transformers import SentenceTransformer, models
+        from sentence_transformers import SentenceTransformer
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        word_embedding_model = models.Transformer(
-            model_name,
-            max_seq_length=512,
-            model_args={
-                "do_lower_case": "uncased" in model_name
-            }
-        )
-        pooling_model = models.Pooling(
-            word_embedding_model.get_word_embedding_dimension(),
-            pooling_mode_mean_tokens=True,
-            pooling_mode_cls_token=False,
-            pooling_mode_max_tokens=False
-        )
-        self.model = SentenceTransformer(
-            modules=[word_embedding_model, pooling_model],
-            device=self.device
-        )
+        self.model = SentenceTransformer(model_name, device=self.device)
 
     def embed(self, texts: List[str]) -> List[List[float]]:
-        """Return the mean-pooled vector of each string."""
+        """Return the sentence vector of each string."""
         embeddings = self.model.encode(
             texts,
             convert_to_numpy=True,

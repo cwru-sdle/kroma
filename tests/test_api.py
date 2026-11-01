@@ -169,3 +169,19 @@ def test_cli_match_explains_a_missing_key(monkeypatch):
     monkeypatch.delenv("TOGETHERAI_API_KEY", raising=False)
     with pytest.raises(SystemExit, match="Set TOGETHERAI_API_KEY"):
         main(["match", str(A), str(B), "--backend", "togetherai"])
+
+
+def test_neural_embedders_are_called_in_batches():
+    from kroma.ontology import Concept, Ontology
+
+    big = Ontology({f"u{i}": Concept(f"u{i}", f"concept {i}", [f"concept {i}"]) for i in range(300)})
+    sizes = []
+
+    class Recording:
+        def encode(self, texts):
+            sizes.append(len(texts))
+            return [[1.0, float(len(t))] for t in texts]
+
+    cands = find_candidates(big, big, top_k=1, embedder=Recording())
+    assert len(cands) == 300
+    assert max(sizes) <= 128 and sum(sizes) == 600

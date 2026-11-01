@@ -77,12 +77,36 @@ Choosing the options
    match. ``3`` is the default; ``5`` to ``10`` finds more.
 
 ``embedder``
-   The default ``"lexical"`` compares character n-grams: fast and model-free,
-   but it cannot connect names with no characters in common, such as
-   "kidney" and "renal organ". A neural embedder can:
-   ``embedder="huggingface:allenai/scibert_scivocab_uncased"`` (needs
-   ``pip install "kroma-om[models]"``), or pass any object with an
-   ``encode(list[str])`` method.
+   How candidates are retrieved. The default ``"lexical"`` compares character
+   n-grams of all labels and synonyms: it needs no ML install and takes under
+   a second. A sentence-embedding model finds a few more matches, mostly
+   pairs whose names differ:
+
+   .. code-block:: python
+
+      kroma.match(src, tgt, embedder="sentence-transformers:sentence-transformers/all-MiniLM-L6-v2")
+
+   This needs ``pip install "kroma-om[models]"``. You can also pass any
+   object with an ``encode(list[str])`` method. Use a model trained for
+   sentence similarity: a plain language model such as SciBERT retrieves far
+   worse than the default. On OAEI Anatomy, the reference target was in the
+   top 3:
+
+   .. list-table::
+      :header-rows: 1
+
+      * - Embedder
+        - All pairs
+        - Pairs with no shared name
+      * - all-MiniLM-L6-v2
+        - 92%
+        - 78%
+      * - ``lexical`` (default)
+        - 89%
+        - 71%
+      * - SciBERT (not similarity-trained)
+        - 54%
+        - 26%
 
 ``min_confidence``
    Keep only answers at this confidence or above, trading recall for

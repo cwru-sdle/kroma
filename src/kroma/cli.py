@@ -45,7 +45,8 @@ def _add_match_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--no-exact", action="store_true",
                         help="Ask the model even when names match exactly")
     parser.add_argument("--embedder", default="lexical",
-                        help='"lexical" (default) or e.g. "huggingface:allenai/scibert_scivocab_uncased"')
+                        help='"lexical" (default) or a sentence-embedding model, e.g. '
+                             '"sentence-transformers:sentence-transformers/all-MiniLM-L6-v2"')
     parser.add_argument("--workers", type=int, default=4, help="Parallel model requests (default: 4)")
     parser.add_argument("--limit", type=int, help="Only match the first N source classes")
 
