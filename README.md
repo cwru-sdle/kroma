@@ -48,9 +48,7 @@ options.
 
 ## Example
 
-The [`examples`](https://github.com/cwru-sdle/kroma/tree/main/examples) folder
-matches two small ontologies with a local [Ollama](https://ollama.com) model,
-so it needs no API key:
+Try KROMA with a local [Ollama](https://ollama.com) model, no API key needed:
 
 ```bash
 git clone https://github.com/cwru-sdle/kroma.git && cd kroma/examples
@@ -65,9 +63,8 @@ python match_ollama.py --model llama3.1
 | lung | lungs | 8 |
 | organ | body organ | 8 |
 
-This run used `llama3.1-32k` (Llama 3.1 8B) at temperature 0 on a small demo
-dataset. See [the example](https://github.com/cwru-sdle/kroma/blob/main/examples/README.md#saved-run)
-for the settings and output files.
+Run with `llama3.1-32k` on a small demo dataset; see the
+[example](https://github.com/cwru-sdle/kroma/tree/main/examples) for details.
 
 ## Results
 

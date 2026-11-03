@@ -1,7 +1,7 @@
-# Example: match two small ontologies
+# Example
 
-This example aligns two small anatomy ontologies, using a model running locally
-in [Ollama](https://ollama.com) as the judge. It needs no API key.
+Match two small anatomy ontologies with a local [Ollama](https://ollama.com)
+model. No API key needed.
 
 ```bash
 pip install kroma-om
@@ -9,20 +9,17 @@ ollama pull llama3.1
 python match_ollama.py --model llama3.1
 ```
 
-## Saved run
+## Results
 
 | Source | Target | Confidence (0-10) | Decided by |
 |:--|:--|:--:|:--|
-| heart | cardiac organ | 10 | Exact match, through the synonym "Heart" |
+| heart | cardiac organ | 10 | Exact match on a synonym |
 | lung | lungs | 8 | Model |
 | organ | body organ | 8 | Model |
 
-- **Model:** `llama3.1-32k`, Llama 3.1 8B with a larger context window, in Ollama
-- **Temperature:** 0
-- **KROMA settings:** defaults, with lexical retrieval
-- **Data:** `anatomy_a.ttl` and `anatomy_b.owl`, three classes each, written for this demo
-- **Output:** [`alignments.csv`](output/alignments.csv) and [`alignments.rdf`](output/alignments.rdf) (OAEI format)
+Run with `llama3.1-32k` (Llama 3.1 8B) at temperature 0 and KROMA's default
+settings, on a small dataset written for this demo. For benchmark results, see
+the [paper](https://doi.org/10.1007/978-3-032-09527-5_34).
 
-Exact matches always get confidence 10 from KROMA; the other scores are the
-model's own. This demo shows how KROMA works, not how well it scores. See the
-[paper](https://doi.org/10.1007/978-3-032-09527-5_34) for benchmark results.
+Saved output: [`alignments.csv`](output/alignments.csv),
+[`alignments.rdf`](output/alignments.rdf).
