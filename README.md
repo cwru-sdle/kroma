@@ -7,7 +7,7 @@
 [![PyPI](https://img.shields.io/pypi/v/kroma-om)](https://pypi.org/project/kroma-om/)
 [![Docs](https://readthedocs.org/projects/kroma/badge/?version=latest)](https://kroma.readthedocs.io/en/latest/)
 [![ISWC 2025](https://img.shields.io/badge/ISWC-2025-b31b1b)](https://doi.org/10.1007/978-3-032-09527-5_34)
-[![License: CC BY 4.0](https://img.shields.io/badge/license-CC%20BY%204.0-green.svg)](https://github.com/cwru-sdle/kroma/blob/main/LICENSE)
+[![License: BSD 3-Clause](https://img.shields.io/badge/license-BSD%203--Clause-green.svg)](https://github.com/cwru-sdle/kroma/blob/main/LICENSE)
 
 [**Documentation**](https://kroma.readthedocs.io/en/latest/) ·
 [Quick start](#quick-start) ·
@@ -113,6 +113,6 @@ Datasets, configs and flags are described in
 
 ## License
 
-[CC BY 4.0](https://github.com/cwru-sdle/kroma/blob/main/LICENSE) ·
+[BSD 3-Clause](https://github.com/cwru-sdle/kroma/blob/main/LICENSE) ·
 Developed at the [SDLE Research Center](https://github.com/cwru-sdle),
 Case Western Reserve University.
