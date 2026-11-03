@@ -59,9 +59,15 @@ ollama pull llama3.1
 python match_ollama.py --model llama3.1
 ```
 
-KROMA accepts any function that takes the two prompts and returns text, which
-is how the script connects to Ollama. The folder includes
-[a saved run and its results](https://github.com/cwru-sdle/kroma/blob/main/examples/README.md#saved-run).
+| Source | Target | Confidence (0-10) |
+|:--|:--|:--:|
+| heart | cardiac organ | 10 |
+| lung | lungs | 8 |
+| organ | body organ | 8 |
+
+This run used `llama3.1-32k` (Llama 3.1 8B) at temperature 0 on a small demo
+dataset. See [the example](https://github.com/cwru-sdle/kroma/blob/main/examples/README.md#saved-run)
+for the settings and output files.
 
 ## Results
 

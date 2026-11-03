@@ -11,13 +11,6 @@
     <skos:altLabel>Heart</skos:altLabel>
     <rdfs:subClassOf rdf:resource="http://example.org/b#BodyOrgan"/>
   </owl:Class>
-  <owl:Class rdf:about="http://example.org/b#CardiacValve">
-    <rdfs:subClassOf rdf:resource="http://example.org/b#Cardiac_Organ"/>
-  </owl:Class>
-  <owl:Class rdf:about="http://example.org/b#Renal_Organ">
-    <rdfs:label>renal organ</rdfs:label>
-    <rdfs:subClassOf rdf:resource="http://example.org/b#BodyOrgan"/>
-  </owl:Class>
   <owl:Class rdf:about="http://example.org/b#Pulmonary_Organ">
     <rdfs:label>lungs</rdfs:label>
     <rdfs:subClassOf rdf:resource="http://example.org/b#BodyOrgan"/>
