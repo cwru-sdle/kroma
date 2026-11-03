@@ -3,6 +3,7 @@
 #   - Running the workflow by hand uploads to TestPyPI.
 # Each index needs a trusted publisher for cwru-sdle/kroma, workflow
 # publish.yml, environment "pypi" or "testpypi".
+# Nothing is built or uploaded unless tests.yml passes on the same commit.
 name: Publish
 
 on:
@@ -11,7 +12,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+
   build:
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
