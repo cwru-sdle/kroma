@@ -11,6 +11,7 @@
 
 [**Documentation**](https://kroma.readthedocs.io/en/latest/) ·
 [Quick start](#quick-start) ·
+[Example](#example) ·
 [Results](#results) ·
 [Paper](https://doi.org/10.1007/978-3-032-09527-5_34) ·
 [Citation](#citation)
@@ -44,6 +45,26 @@ KROMA reads any RDF format (`.owl`, `.ttl`, `.rdf`, …) and works with OpenAI,
 Together AI, or any function that takes a prompt and returns text. See the
 [documentation](https://kroma.readthedocs.io/en/latest/) for all
 options.
+
+## Example
+
+Try KROMA with a local [Ollama](https://ollama.com) model, no API key needed:
+
+```bash
+git clone https://github.com/cwru-sdle/kroma.git && cd kroma/examples
+pip install kroma-om
+ollama pull llama3.1
+python match_ollama.py --model llama3.1
+```
+
+| Source | Target | Confidence (0-10) |
+|:--|:--|:--:|
+| heart | cardiac organ | 10 |
+| lung | lungs | 8 |
+| organ | body organ | 8 |
+
+Run with `llama3.1-32k` on a small demo dataset; see the
+[example](https://github.com/cwru-sdle/kroma/tree/main/examples) for details.
 
 ## Results
 

@@ -1,0 +1,4 @@
+source,target,source_label,target_label,relation,confidence,similarity,method
+http://example.org/a#Heart,http://example.org/b#Cardiac_Organ,heart,cardiac organ,=,10,0.9999999403953552,exact
+http://example.org/a#Lung,http://example.org/b#Pulmonary_Organ,lung,lungs,=,8,0.5898504257202148,llm
+http://example.org/a#Organ,http://example.org/b#BodyOrgan,organ,body organ,=,8,0.5860071778297424,llm

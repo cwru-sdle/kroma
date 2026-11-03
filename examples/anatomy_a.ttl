@@ -1,0 +1,8 @@
+@prefix : <http://example.org/a#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#> .
+
+:Organ a owl:Class ; rdfs:label "organ" .
+:Heart a owl:Class ; rdfs:label "heart" ; rdfs:subClassOf :Organ .
+:Lung a owl:Class ; rdfs:label "lung" ; oboInOwl:hasExactSynonym "pulmo" ; rdfs:subClassOf :Organ .

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns="http://knowledgeweb.semanticweb.org/heterogeneity/alignment"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<Alignment>
+  <xml>yes</xml>
+  <level>0</level>
+  <type>??</type>
+  <map>
+    <Cell>
+      <entity1 rdf:resource="http://example.org/a#Heart"/>
+      <entity2 rdf:resource="http://example.org/b#Cardiac_Organ"/>
+      <relation>=</relation>
+      <measure rdf:datatype="http://www.w3.org/2001/XMLSchema#float">1.00</measure>
+    </Cell>
+  </map>
+  <map>
+    <Cell>
+      <entity1 rdf:resource="http://example.org/a#Lung"/>
+      <entity2 rdf:resource="http://example.org/b#Pulmonary_Organ"/>
+      <relation>=</relation>
+      <measure rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</measure>
+    </Cell>
+  </map>
+  <map>
+    <Cell>
+      <entity1 rdf:resource="http://example.org/a#Organ"/>
+      <entity2 rdf:resource="http://example.org/b#BodyOrgan"/>
+      <relation>=</relation>
+      <measure rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</measure>
+    </Cell>
+  </map>
+</Alignment>
+</rdf:RDF>
