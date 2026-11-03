@@ -14,7 +14,7 @@ authors = [
   { name = "Roger French" },
   { name = "Yinghui Wu" },
 ]
-license = "CC-BY-4.0"
+license = "BSD-3-Clause"
 keywords = ["ontology matching", "ontology alignment", "knowledge graphs", "large language models", "retrieval-augmented generation", "semantic web"]
 classifiers = [
   "Development Status :: 4 - Beta",
