@@ -11,6 +11,7 @@
 
 [**Documentation**](https://kroma.readthedocs.io/en/latest/) ·
 [Quick start](#quick-start) ·
+[Example](#example) ·
 [Results](#results) ·
 [Paper](https://doi.org/10.1007/978-3-032-09527-5_34) ·
 [Citation](#citation)
@@ -44,6 +45,23 @@ KROMA reads any RDF format (`.owl`, `.ttl`, `.rdf`, …) and works with OpenAI,
 Together AI, or any function that takes a prompt and returns text. See the
 [documentation](https://kroma.readthedocs.io/en/latest/) for all
 options.
+
+## Example
+
+The [`examples`](https://github.com/cwru-sdle/kroma/tree/main/examples) folder
+matches two small ontologies with a local [Ollama](https://ollama.com) model,
+so it needs no API key:
+
+```bash
+git clone https://github.com/cwru-sdle/kroma.git && cd kroma/examples
+pip install kroma-om
+ollama pull llama3.1
+python match_ollama.py --model llama3.1
+```
+
+KROMA accepts any function that takes the two prompts and returns text, which
+is how the script connects to Ollama. The folder includes
+[a saved run and its results](https://github.com/cwru-sdle/kroma/blob/main/examples/README.md#saved-run).
 
 ## Results
 
