@@ -53,8 +53,8 @@ Try KROMA with a local [Ollama](https://ollama.com) model, no API key needed:
 ```bash
 git clone https://github.com/cwru-sdle/kroma.git && cd kroma/examples
 pip install kroma-om
-ollama pull llama3.1
-python match_ollama.py --model llama3.1
+ollama pull llama3.2:1b
+python match_ollama.py --model llama3.2:1b
 ```
 
 | Source | Target | Confidence (0-10) |
@@ -63,7 +63,7 @@ python match_ollama.py --model llama3.1
 | lung | lungs | 8 |
 | organ | body organ | 8 |
 
-Run with `llama3.1-32k` on a small demo dataset; see the
+Run with `llama3.2:1b` on a small demo dataset; see the
 [example](https://github.com/cwru-sdle/kroma/tree/main/examples) for details.
 
 ## Results
