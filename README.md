@@ -16,7 +16,7 @@ Lam Nguyen · Erika Barcelos · Roger French · Yinghui Wu
 [Docs](https://kroma.readthedocs.io/en/latest/) ·
 [Quick start](#quick-start) ·
 [Results](#results) ·
-[Paper](https://arxiv.org/abs/2507.14032) ·
+[Paper](https://link.springer.com/chapter/10.1007/978-3-032-09527-5_34) ·
 [Citation](#citation)
 
 </div>
@@ -68,7 +68,7 @@ See the [example](https://github.com/cwru-sdle/kroma/tree/main/examples) for det
 
 ## Results
 
-F1 (%) on six OAEI tracks, from the [paper](https://arxiv.org/abs/2507.14032):
+F1 (%) on six OAEI tracks, from the [paper](https://link.springer.com/chapter/10.1007/978-3-032-09527-5_34):
 
 | Track | KROMA | Best baseline |
 |:--|:--:|:--:|
