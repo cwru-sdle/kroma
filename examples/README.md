@@ -5,8 +5,8 @@ model. No API key needed.
 
 ```bash
 pip install kroma-om
-ollama pull llama3.1
-python match_ollama.py --model llama3.1
+ollama pull llama3.2:1b
+python match_ollama.py --model llama3.2:1b
 ```
 
 ## Results
@@ -17,7 +17,7 @@ python match_ollama.py --model llama3.1
 | lung | lungs | 8 | Model |
 | organ | body organ | 8 | Model |
 
-Run with `llama3.1-32k` (Llama 3.1 8B) at temperature 0 and KROMA's default
+Run with `llama3.2:1b` (Llama 3.2 1B) at temperature 0 and KROMA's default
 settings, on a small dataset written for this demo. For benchmark results, see
 the [paper](https://doi.org/10.1007/978-3-032-09527-5_34).
 

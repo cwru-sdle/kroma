@@ -2,8 +2,8 @@
 
 Needs no API key, only KROMA and a running Ollama (https://ollama.com):
 
-    ollama pull llama3.1
-    python match_ollama.py --model llama3.1
+    ollama pull llama3.2:1b
+    python match_ollama.py --model llama3.2:1b
 
 Writes the alignments to the output folder.
 """
@@ -22,7 +22,7 @@ REPLY_FORMAT = "\n\nReply with only the two tags: <answer>Yes or No</answer><con
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--model", default="llama3.1", help="Ollama model name")
+    parser.add_argument("--model", default="llama3.2:1b", help="Ollama model name")
     parser.add_argument("--output", type=Path, default=HERE / "output", help="Folder for the results")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
