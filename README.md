@@ -4,24 +4,27 @@
 
 **Ontology matching with knowledge retrieval and large language models**
 
-[![PyPI](https://img.shields.io/pypi/v/kroma-om)](https://pypi.org/project/kroma-om/)
+[![PyPI](https://img.shields.io/pypi/v/kroma-om?color=3b82f6)](https://pypi.org/project/kroma-om/)
+[![Python](https://img.shields.io/pypi/pyversions/kroma-om)](https://pypi.org/project/kroma-om/)
+[![Tests](https://github.com/cwru-sdle/kroma/actions/workflows/tests.yml/badge.svg)](https://github.com/cwru-sdle/kroma/actions/workflows/tests.yml)
 [![Docs](https://readthedocs.org/projects/kroma/badge/?version=latest)](https://kroma.readthedocs.io/en/latest/)
 [![ISWC 2025](https://img.shields.io/badge/ISWC-2025-b31b1b)](https://doi.org/10.1007/978-3-032-09527-5_34)
-[![License: BSD 3-Clause](https://img.shields.io/badge/license-BSD%203--Clause-green.svg)](https://github.com/cwru-sdle/kroma/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](https://github.com/cwru-sdle/kroma/blob/main/LICENSE)
 
-[**Documentation**](https://kroma.readthedocs.io/en/latest/) ·
+Lam Nguyen · Erika Barcelos · Roger French · Yinghui Wu
+
+[Docs](https://kroma.readthedocs.io/en/latest/) ·
 [Quick start](#quick-start) ·
-[Example](#example) ·
 [Results](#results) ·
-[Paper](https://doi.org/10.1007/978-3-032-09527-5_34) ·
+[Paper](https://link.springer.com/chapter/10.1007/978-3-032-09527-5_34) ·
 [Citation](#citation)
 
 </div>
 
-KROMA finds the concepts that two ontologies share. It retrieves likely
-matches for each concept, accepts identical names directly, and asks a large
-language model about the rest, showing it each concept's labels, synonyms,
-parents and children.
+KROMA finds the concepts that two ontologies share. It retrieves likely matches
+for each concept, accepts identical names directly, and asks a large language
+model about the rest, showing it each concept's labels, synonyms, parents and
+children.
 
 ## Quick start
 
@@ -42,13 +45,11 @@ result.save("alignments.csv")    # .csv, .tsv, or .rdf (OAEI format)
 ```
 
 KROMA reads any RDF format (`.owl`, `.ttl`, `.rdf`, …) and works with OpenAI,
-Together AI, or any function that takes a prompt and returns text. See the
-[documentation](https://kroma.readthedocs.io/en/latest/) for all
-options.
+Together AI, or any function that takes a prompt and returns text.
 
-## Example
+## Run it locally
 
-Try KROMA with a local [Ollama](https://ollama.com) model, no API key needed:
+No API key needed, only [Ollama](https://ollama.com) and a small model:
 
 ```bash
 git clone https://github.com/cwru-sdle/kroma.git && cd kroma/examples
@@ -63,12 +64,11 @@ python match_ollama.py --model llama3.2:1b
 | lung | lungs | 8 |
 | organ | body organ | 8 |
 
-Run with `llama3.2:1b` on a small demo dataset; see the
-[example](https://github.com/cwru-sdle/kroma/tree/main/examples) for details.
+See the [example](https://github.com/cwru-sdle/kroma/tree/main/examples) for details.
 
 ## Results
 
-F1 (%) on six OAEI tracks, from the [ISWC 2025 paper](https://doi.org/10.1007/978-3-032-09527-5_34):
+F1 (%) on six OAEI tracks, from the [paper](https://link.springer.com/chapter/10.1007/978-3-032-09527-5_34):
 
 | Track | KROMA | Best baseline |
 |:--|:--:|:--:|
@@ -82,7 +82,7 @@ F1 (%) on six OAEI tracks, from the [ISWC 2025 paper](https://doi.org/10.1007/97
 Ablations, other models and cost are in the
 [full paper](https://github.com/cwru-sdle/kroma/blob/main/full.pdf).
 
-## Reproducing the paper
+## Reproduce the paper
 
 ```bash
 git clone https://github.com/cwru-sdle/kroma.git && cd kroma
