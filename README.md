@@ -7,7 +7,7 @@
 [![PyPI](https://img.shields.io/pypi/v/kroma-om?color=3b82f6)](https://pypi.org/project/kroma-om/)
 [![Python](https://img.shields.io/pypi/pyversions/kroma-om)](https://pypi.org/project/kroma-om/)
 [![Tests](https://github.com/cwru-sdle/kroma/actions/workflows/tests.yml/badge.svg)](https://github.com/cwru-sdle/kroma/actions/workflows/tests.yml)
-[![Docs](https://readthedocs.org/projects/kroma/badge/?version=latest)](https://kroma.readthedocs.io/en/latest/)
+[![Docs](https://img.shields.io/readthedocs/kroma)](https://kroma.readthedocs.io/en/latest/)
 [![ISWC 2025](https://img.shields.io/badge/ISWC-2025-b31b1b)](https://doi.org/10.1007/978-3-032-09527-5_34)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](https://github.com/cwru-sdle/kroma/blob/main/LICENSE)
 
