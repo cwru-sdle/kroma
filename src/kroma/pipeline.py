@@ -249,6 +249,24 @@ class MatchingRun:
             dictionary=self.dictionary,
             query_opts=self.query_opts,
         )
+        self._add_hierarchy(self.source, self.source_meta)
+        self._add_hierarchy(self.target, self.target_meta)
+
+    def _add_hierarchy(self, graph, meta) -> None:
+        """Add the edges a concept's metadata names, since alignment CSVs hold no hierarchy.
+
+        Relatives are matched to the graph's concepts by label; others are left out.
+        """
+        by_label = {key[0]: key for key in graph}
+        edges = set()
+        for key in graph:
+            record = meta.get(key[0], {})
+            edges |= {(key, by_label[c]) for c in record.get("children", []) if c in by_label}
+            edges |= {(by_label[p], key) for p in record.get("parents", []) if p in by_label}
+        for parent, child in edges:
+            if parent != child:
+                graph[parent] = [*dict.fromkeys([*graph[parent], child])]
+        self.logger.info(f"Added {len(edges)} hierarchy edges from concept metadata")
 
     def _prepare_graph(self) -> None:
         self.compressed_graph = merge_graphs(self.source, self.target)
@@ -270,22 +288,26 @@ class MatchingRun:
         target_ids = list(self.target.keys())
         source_vectors = self._combined(source_ids, self.source_meta)
         target_vectors = self._combined(target_ids, self.target_meta)
+        self.source_vectors = dict(zip(source_ids, source_vectors))
+        self.target_vectors = dict(zip(target_ids, target_vectors))
 
-        pool_src = [key for key in source_ids if key not in eval_src]
-        pool_tgt = [key for key in target_ids if key not in eval_tgt]
+        pool_src = [key for key in source_ids if key[0] not in eval_src]
+        pool_tgt = [key for key in target_ids if key[0] not in eval_tgt]
         self.src_store = VectorStore()
         self.tgt_store = VectorStore()
-        self.src_store.add(
-            ext_ids=pool_src,
-            embeddings=np.vstack([source_vectors[source_ids.index(key)] for key in pool_src]),
-        )
-        self.tgt_store.add(
-            ext_ids=pool_tgt,
-            embeddings=np.vstack([target_vectors[target_ids.index(key)] for key in pool_tgt]),
-        )
+        if pool_src:
+            self.src_store.add(
+                ext_ids=pool_src,
+                embeddings=np.vstack([source_vectors[source_ids.index(key)] for key in pool_src]),
+            )
+        if pool_tgt:
+            self.tgt_store.add(
+                ext_ids=pool_tgt,
+                embeddings=np.vstack([target_vectors[target_ids.index(key)] for key in pool_tgt]),
+            )
 
     def _combined(self, ids, meta):
-        labels = [f"{meta[key]['labels'][0]}" for key in ids]
+        labels = [(meta.get(key[0], {}).get("labels") or [key[0]])[0] for key in ids]
         text = self.embedder.encode(labels)
         return compute_combined_embeddings(
             adj_dict=self.compressed_graph,
@@ -334,8 +356,9 @@ class MatchingRun:
             f"children {', '.join(tgt_meta['children'])}, synonyms {', '.join(tgt_meta['synonyms'])}, "
             f"and labels {', '.join(tgt_meta['labels'])}.\n\n"
         )
-        src_hits = self.src_store.query(src_emb, top_k=RETRIEVAL_TOP_K)
-        tgt_hits = self.tgt_store.query(tgt_emb, top_k=RETRIEVAL_TOP_K)
+        # The stores hold combined text and structure vectors, so a query has to be one too.
+        src_hits = self.src_store.query(self.source_vectors[src_key], top_k=RETRIEVAL_TOP_K)
+        tgt_hits = self.tgt_store.query(self.target_vectors[tgt_key], top_k=RETRIEVAL_TOP_K)
         src_ctx = [f"{list_to_str(self.source_meta[name]['labels'])}" for (name, _), _ in src_hits if name in self.source_meta]
         tgt_ctx = [f"{list_to_str(self.target_meta[name]['labels'])}" for (name, _), _ in tgt_hits if name in self.target_meta]
         rag_block = (
@@ -348,8 +371,8 @@ class MatchingRun:
             agent_configs=self.agent_configs,
             backend=self.agent_type,
             model_name=self.agent_name,
-            source_term=(src_code, self.source[src_code]),
-            target_term=(tgt_code, self.target[tgt_code]),
+            source_term=(src_code, self.source.get(src_key, [])),
+            target_term=(tgt_code, self.target.get(tgt_key, [])),
             pcmaps={"source": self.source_map, "target": self.target_map},
             dictionary=self.dictionary,
             options=self.query_opts,

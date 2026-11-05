@@ -8,11 +8,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 def build_graph(adj_dict):
-    """Build a directed :class:`networkx.DiGraph` from a parent-to-children map."""
+    """Build a directed :class:`networkx.DiGraph` from a parent-to-children map.
+
+    Nodes become strings: node2vec samples walks with NumPy, which cannot choose among tuples, and
+    :func:`get_structural_embeddings` looks vectors up by ``str(node)``.
+    """
     G = nx.DiGraph()
     for u, children in adj_dict.items():
         for v in children:
-            G.add_edge(u, v)
+            G.add_edge(str(u), str(v))
     return G
 
 
@@ -129,7 +133,11 @@ def compute_combined_embeddings(
         n2v_kwargs = {}
 
     graph = build_graph(adj_dict)
-    model = train_node2vec(graph, **n2v_kwargs)
-    struct_embs = get_structural_embeddings(model, node_keys)
+    if graph.number_of_edges() == 0:
+        logger.warning("The graph has no edges, so structural embeddings are zeros")
+        struct_embs = np.zeros((len(node_keys), n2v_kwargs.get("dimensions", 128)))
+    else:
+        model = train_node2vec(graph, **n2v_kwargs)
+        struct_embs = get_structural_embeddings(model, node_keys)
     combined = combine_embeddings(text_embs, struct_embs, method=combine_method, alpha=alpha)
     return combined
