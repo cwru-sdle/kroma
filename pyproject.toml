@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kroma-om"
-version = "0.2.0"
+version = "0.3.0"
 description = "Ontology matching with knowledge retrieval and large language models"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -38,6 +38,7 @@ models = [
   "nltk",
   "networkx",
   "node2vec",
+  "setuptools<82",  # node2vec imports pkg_resources, which setuptools 82 removed
   "openai",
   "scikit-learn",
   "scipy",

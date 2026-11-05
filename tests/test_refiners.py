@@ -173,3 +173,11 @@ def test_the_run_parser_selects_a_refiner():
     args = build_run_parser().parse_args(["--method_config", "kroma", "--llm", "gpt-4o-mini", "--refiner", "keep_all"])
     assert args.refiner == "keep_all"
     assert build_run_parser().parse_args(["--method_config", "kroma", "--llm", "gpt-4o-mini"]).refiner == "bisimulation"
+
+
+def test_kroma_run_accepts_a_refiner():
+    from kroma.cli import build_parser
+
+    argv = ["run", "--method_config", "kroma", "--llm", "gpt-4o-mini"]
+    assert build_parser().parse_args(argv).refiner == "bisimulation"
+    assert build_parser().parse_args([*argv, "--refiner", "keep_all"]).refiner == "keep_all"
