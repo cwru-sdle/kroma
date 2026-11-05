@@ -1,0 +1,91 @@
+# One click to release: see RELEASING.md.
+#   gh workflow run release.yml -R cwru-sdle/kroma -f bump=patch
+# Tests the latest main, bumps the version, commits, tags, creates the GitHub release, and starts
+# publish.yml. A release made with GITHUB_TOKEN does not trigger other workflows, so this starts
+# publish.yml itself, which also means it cannot publish twice.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Which part of the version to bump
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      dry_run:
+        description: Do everything except commit, tag, and publish
+        type: boolean
+        default: false
+
+concurrency:
+  group: release
+
+jobs:
+  tests:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/tests.yml
+
+  release:
+    needs: tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Check that main has something to release
+        run: |
+          last=$(git describe --tags --abbrev=0)
+          count=$(git rev-list --count "$last"..HEAD)
+          echo "$count commits since $last"
+          if [ "$count" -eq 0 ]; then
+            echo "::error::Nothing to release: main is still at $last."
+            exit 1
+          fi
+
+      - name: Bump the version
+        id: bump
+        run: |
+          version=$(python scripts/bump_version.py "${{ inputs.bump }}")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            echo "::error::Tag v$version already exists."
+            exit 1
+          fi
+          echo "Releasing $version"
+
+      - name: Check that it builds
+        run: |
+          uv build
+          uvx twine check dist/*
+
+      - name: Commit, tag, and create the release
+        if: ${{ !inputs.dry_run }}
+        run: |
+          version="${{ steps.bump.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml src/kroma/__init__.py
+          git commit -m "Release $version."
+          git tag "v$version"
+          git push origin HEAD:main "v$version"
+          gh release create "v$version" --verify-tag --title "v$version" --generate-notes
+
+      - name: Publish to PyPI
+        if: ${{ !inputs.dry_run }}
+        run: gh workflow run publish.yml --ref "v${{ steps.bump.outputs.version }}" -f target=pypi
+
+      - name: Summary
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "Dry run: would release ${{ steps.bump.outputs.version }}. Nothing was changed." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Released ${{ steps.bump.outputs.version }}. See the Publish workflow for the upload." >> "$GITHUB_STEP_SUMMARY"
+          fi
