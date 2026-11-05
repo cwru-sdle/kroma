@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kroma-om"
-version = "0.3.0"
+version = "0.3.1"
 description = "Ontology matching with knowledge retrieval and large language models"
 readme = "README.md"
 requires-python = ">=3.12"
