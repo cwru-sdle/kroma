@@ -25,6 +25,8 @@ def _add_run_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--compare_models", action="store_true")
     parser.add_argument("--bisim", action="store_true")
     parser.add_argument("--debate", action="store_true")
+    parser.add_argument("--refiner", default="bisimulation",
+                        help="Refinement method, as registered with register_refiner (default: bisimulation)")
 
 
 def _add_match_args(parser: argparse.ArgumentParser) -> None:
@@ -120,8 +122,6 @@ def build_run_parser() -> argparse.ArgumentParser:
         description="Evaluate KROMA ontology matching",
     )
     _add_run_args(parser)
-    parser.add_argument("--refiner", default="bisimulation",
-                        help="Refinement method, as registered with register_refiner (default: bisimulation)")
     return parser
 
 
