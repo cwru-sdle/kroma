@@ -15,7 +15,7 @@ import numpy as np
 
 from kroma.agents.inference import infer as agent_inference
 from kroma.algorithms.node2vec import compute_combined_embeddings
-from kroma.algorithms.refinement import offline_refine, online_refine
+from kroma.algorithms.refiners import create_refiner
 from kroma.algorithms.utils import compute_node_ranks, merge_graphs
 from kroma.config.constants import (
     EVAL_SIZE_FRACTIONS,
@@ -57,7 +57,8 @@ class MatchingRun:
         args (argparse.Namespace): Run flags from :mod:`kroma.cli`
             (``method_config``, ``llm``, ``size``, ``reasoning``,
             ``baseline``, ``active_learning``, ``compare_models``, ``bisim``,
-            ``debate``).
+            ``debate``, and optionally ``refiner``, see
+            :mod:`kroma.algorithms.refiners`).
         listener (MetricsListener | None): Collector for token counts and
             refinement timings. A new :class:`~kroma.observers.MetricsListener`
             is created when omitted.
@@ -72,6 +73,7 @@ class MatchingRun:
     def __init__(self, args, listener=None):
         self.args = args
         self.listener = listener or MetricsListener()
+        self.refiner = create_refiner(getattr(args, "refiner", "bisimulation"))
 
     def execute(self) -> dict:
         """Run :meth:`prepare`, :meth:`score_pairs` and :meth:`finish`.
@@ -149,9 +151,9 @@ class MatchingRun:
             estimated cost (see :func:`kroma.costs.api_cost`) and refinement
             timings.
         """
-        timed(self.listener, "offline_refinement")(offline_refine)(
-            adj=self.compressed_graph,
-            rank_attr=self.rank_attr_map,
+        timed(self.listener, "offline_refinement")(self.refiner.offline)(
+            self.compressed_graph,
+            self.rank_attr_map,
         )
         total = time.time() - self.started
         precision, recall, f1 = calculate_metrics(self.y_true, self.y_pred)
@@ -258,7 +260,7 @@ class MatchingRun:
         }
         self.rank_attr_map = compute_node_ranks(self.compressed_graph)
         self.equiv_classes = {node: node for node in nodes}
-        offline_refine(adj=self.compressed_graph, rank_attr=self.rank_attr_map)
+        self.refiner.offline(self.compressed_graph, self.rank_attr_map)
 
     def _build_stores(self) -> None:
         self.embedder = create_embedding_model("huggingface", "allenai/scibert_scivocab_uncased")
@@ -298,7 +300,7 @@ class MatchingRun:
         snapshot = {node: set(children) for node, children in self.compressed_graph.items()}
         snapshot_ranks = compute_node_ranks(snapshot)
         started = time.time()
-        refined = timed(self.listener, "offline_refinement")(offline_refine)(snapshot, snapshot_ranks)
+        refined = timed(self.listener, "offline_refinement")(self.refiner.offline)(snapshot, snapshot_ranks)
         self.rank_attr_map = compute_node_ranks(refined)
         print(f"[Benchmark] offline_refine at idx={index} took {time.time() - started:.3f}s")
 
@@ -382,7 +384,7 @@ class MatchingRun:
         if not accept:
             return
 
-        self.equiv_classes, expert_questions = timed(self.listener, "online_refinement")(online_refine)(
+        self.equiv_classes, expert_questions = timed(self.listener, "online_refinement")(self.refiner.online)(
             self.compressed_graph,
             self.rank_attr_map,
             self.equiv_classes,

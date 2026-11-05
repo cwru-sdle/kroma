@@ -120,6 +120,8 @@ def build_run_parser() -> argparse.ArgumentParser:
         description="Evaluate KROMA ontology matching",
     )
     _add_run_args(parser)
+    parser.add_argument("--refiner", default="bisimulation",
+                        help="Refinement method, as registered with register_refiner (default: bisimulation)")
     return parser
 
 
