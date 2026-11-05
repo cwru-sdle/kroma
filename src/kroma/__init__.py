@@ -17,7 +17,7 @@ Example:
     >>> result.save("alignments.csv")  # doctest: +SKIP
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from kroma.alignment import Alignment, MatchResult, save_alignments
 from kroma.matcher import find_candidates, match
