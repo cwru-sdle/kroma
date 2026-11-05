@@ -1,15 +1,16 @@
 Extending KROMA
 ===============
 
-=========================================================  ==================================================================
+=========================================================  ===========================================================
 To add                                                     Use
-=========================================================  ==================================================================
+=========================================================  ===========================================================
 A chat model provider                                      :func:`~kroma.inference.factory.register_chat_backend`
 An embedding model provider                                :func:`~kroma.inference.factory.register_embedding_backend`
 A context source, such as a dictionary or SPARQL endpoint  :func:`~kroma.tasks.query_engine.register_query_strategy`
 An alignment file format                                   subclass :class:`~kroma.tasks.loader.OntologyLoader`
 A judging procedure                                        subclass :class:`~kroma.agents.inference.InferenceStrategy`
-=========================================================  ==================================================================
+A refinement method                                        :func:`~kroma.algorithms.refiners.register_refiner`
+=========================================================  ===========================================================
 
 A chat backend
 --------------
@@ -60,3 +61,21 @@ A strategy has a ``fetch`` method returning
    register_query_strategy("glossary", GlossaryStrategy({"heart": ["cor"]}))
 
 Add ``"glossary"`` to a method config's ``query_options`` to use it.
+
+A refinement method
+-------------------
+
+A refiner has an ``offline`` and an ``online`` method, with the signatures of
+:func:`~kroma.algorithms.refinement.offline_refine` and
+:func:`~kroma.algorithms.refinement.online_refine`. Register it, and select it
+with ``kroma run --refiner keep_all``:
+
+.. code-block:: python
+
+   from kroma.algorithms.refiners import BisimulationRefiner, register_refiner
+
+   class KeepAll(BisimulationRefiner):
+       def offline(self, adj, rank_attr):
+           return adj
+
+   register_refiner("keep_all", KeepAll)

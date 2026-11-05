@@ -66,6 +66,12 @@ Algorithms
 
 .. automodule:: kroma.algorithms.refinement
 
+.. automodule:: kroma.algorithms.refiners
+
+.. automodule:: kroma.algorithms.relations
+
+.. automodule:: kroma.algorithms.relation_rules
+
 .. automodule:: kroma.algorithms.utils
 
 .. automodule:: kroma.algorithms.node2vec
