@@ -38,7 +38,7 @@ models = [
   "nltk",
   "networkx",
   "node2vec",
-  "setuptools<84",  # node2vec imports pkg_resources, which later setuptools removed
+  "setuptools<82",  # node2vec imports pkg_resources, which setuptools 82 removed
   "openai",
   "scikit-learn",
   "scipy",
